@@ -1,0 +1,1377 @@
+[
+  {
+    "id": "dairy-free-waffles",
+    "cat": "breakfast",
+    "title": "Dairy Free Waffles",
+    "author": "Ashley · Cook Nourish Bliss",
+    "url": "cooknourishbliss.com/2020/02/11/classic-dairy-free-waffles",
+    "description": "Crispy on the outside and fluffy on the inside, with a homemade almond milk buttermilk. Soy free with a gluten free option.",
+    "meta": {
+      "yield": "10–12 waffles",
+      "prep": "10 min",
+      "cook": "15 min",
+      "total": "35 min"
+    },
+    "ingredients": [
+      {
+        "section": "Almond Milk Buttermilk"
+      },
+      {
+        "q": 1.5,
+        "u": "tbsp",
+        "name": "apple cider vinegar"
+      },
+      {
+        "q": 1.667,
+        "u": "cup",
+        "name": "unsweetened almond milk",
+        "prefix": "about "
+      },
+      {
+        "section": "Waffles"
+      },
+      {
+        "q": 1.75,
+        "u": "cup",
+        "name": "all-purpose flour"
+      },
+      {
+        "q": 2,
+        "u": "tsp",
+        "name": "baking powder"
+      },
+      {
+        "q": 0.5,
+        "u": "tsp",
+        "name": "baking soda"
+      },
+      {
+        "q": 2,
+        "u": "tbsp",
+        "name": "cornstarch"
+      },
+      {
+        "q": 0.5,
+        "u": "tsp",
+        "name": "fine sea salt"
+      },
+      {
+        "q": 2,
+        "u": "large",
+        "name": "eggs"
+      },
+      {
+        "q": 0.25,
+        "u": "cup",
+        "name": "melted coconut oil",
+        "note": "cooled slightly"
+      },
+      {
+        "q": 3,
+        "u": "tbsp",
+        "name": "coconut sugar",
+        "note": "or granulated/brown sugar"
+      },
+      {
+        "q": 1,
+        "u": "tsp",
+        "name": "vanilla extract"
+      },
+      {
+        "q": 0.25,
+        "u": "tsp",
+        "name": "almond extract",
+        "note": "optional"
+      }
+    ],
+    "instructions": [
+      "Buttermilk: Add vinegar to a large liquid measuring cup. Pour in enough almond milk to reach 1⅔ cups total. Stir and let rest 10 minutes.",
+      "Whisk flour, baking powder, baking soda, cornstarch, and salt in a large bowl.",
+      "In a medium bowl, whisk buttermilk, eggs, coconut oil, sugar, vanilla, and almond extract until well combined.",
+      "Add wet to dry, mixing until just combined (batter will be lumpy — don't overmix).",
+      "Let batter rest while you preheat the waffle maker.",
+      "Pour or scoop the recommended amount into the hot waffle maker. Cook until browned. Repeat with remaining batter.",
+      "Serve with toppings of choice."
+    ],
+    "notes": {
+      "Tips & Substitutions": [
+        "Prep the buttermilk first, then melt the coconut oil so it cools to the right temperature.",
+        "Measure flour by fluffing, spooning into the cup, and leveling.",
+        "Yield is for a Belgian-style waffle maker; non-Belgian makers yield close to double.",
+        "Cinnamon and/or nutmeg are lovely additions to the batter.",
+        "Gluten-free: Bob's Red Mill GF 1-to-1 tested well.",
+        "For whole grain flavor: 1 cup AP + ¾ cup white whole wheat flour."
+      ],
+      "Storage": [
+        "Fridge: airtight container, up to 4 days. Reheat in toaster.",
+        "Freezer: up to 3 months. Toast straight from frozen.",
+        "Keep-warm: place finished waffles on a baking sheet in a 200°F oven."
+      ]
+    }
+  },
+  {
+    "id": "blueberry-french-toast-casserole",
+    "cat": "breakfast",
+    "title": "Blueberry French Toast Casserole",
+    "author": "Courtney Cotromano · Acts of Sourdough",
+    "url": "actsofsourdough.com/blogs/blog/blueberry-french-toast-casserole",
+    "description": "A make-ahead Sunday breakfast that turns an old loaf of sourdough into something everyone will love.",
+    "meta": {
+      "servings": "12",
+      "prep": "10 min",
+      "rest": "8 hr overnight",
+      "total": "~8 hr 55 min"
+    },
+    "ingredients": [
+      {
+        "section": "Casserole"
+      },
+      {
+        "q": 1,
+        "u": "loaf",
+        "name": "blueberry cinnamon sugar sourdough loaf",
+        "note": "or any leftover sourdough, diced"
+      },
+      {
+        "q": 8,
+        "u": "large",
+        "name": "eggs"
+      },
+      {
+        "q": 1.5,
+        "u": "cup",
+        "name": "milk"
+      },
+      {
+        "q": 0.5,
+        "u": "cup",
+        "name": "heavy cream"
+      },
+      {
+        "q": 0.5,
+        "u": "cup",
+        "name": "brown sugar"
+      },
+      {
+        "q": 1,
+        "u": "tsp",
+        "name": "cinnamon"
+      },
+      {
+        "q": 1,
+        "u": "tsp",
+        "name": "vanilla extract"
+      },
+      {
+        "q": 1,
+        "u": "cup",
+        "name": "frozen wild blueberries"
+      },
+      {
+        "section": "Cinnamon Crumble Topping"
+      },
+      {
+        "q": 0.5,
+        "u": "cup",
+        "name": "butter",
+        "note": "grated or sliced"
+      },
+      {
+        "q": 0.5,
+        "u": "cup",
+        "name": "brown sugar"
+      },
+      {
+        "q": 0.25,
+        "u": "cup",
+        "name": "flour"
+      },
+      {
+        "q": 1,
+        "u": "tsp",
+        "name": "cinnamon"
+      },
+      {
+        "q": 0.25,
+        "u": "tsp",
+        "name": "salt"
+      }
+    ],
+    "instructions": [
+      "Evening before: dice leftover sourdough and place in a buttered 9×13 baking dish.",
+      "Whisk eggs, milk, heavy cream, vanilla, sugar, and cinnamon in a large bowl.",
+      "Pour mixture over the bread in an even layer.",
+      "In a smaller bowl, mix grated butter, flour, sugar, cinnamon, and salt until crumbly.",
+      "Spread crumble topping evenly over the bread. Cover with plastic wrap and refrigerate overnight.",
+      "In the morning, preheat oven to 415°F.",
+      "Remove plastic, pour 1 cup of blueberries evenly over the top.",
+      "Cover with foil and bake 20 minutes.",
+      "Remove foil and bake another 20–25 minutes.",
+      "Serve warm with maple syrup and extra fruit."
+    ],
+    "notes": {
+      "Tips & Tricks": [
+        "Dice any leftover sourdough and freeze for future French toast casseroles.",
+        "In a pinch, the casserole can sit just 2 hours instead of overnight."
+      ],
+      "Variations": [
+        "Try Cranberry + Orange, Strawberries + Cream, or Pumpkin + Cinnamon Swirl loaves."
+      ],
+      "Storage": [
+        "Airtight container in the fridge for 3–4 days. Reheat in the oven as you use it."
+      ]
+    }
+  },
+  {
+    "id": "sweet-spinach-muffins",
+    "cat": "breakfast",
+    "title": "Sweet Spinach Muffins with Banana",
+    "author": "Amy Palanjian · Yummy Toddler Food",
+    "url": "yummytoddlerfood.com/super-green-banana-spinach-muffins",
+    "description": "Healthy blender muffins with greens, fruit, and whole grains. Taste like banana bread, packed with vitamins from spinach.",
+    "meta": {
+      "servings": "12 muffins",
+      "prep": "10 min",
+      "cook": "18 min",
+      "total": "28 min"
+    },
+    "ingredients": [
+      {
+        "q": 1,
+        "u": "cup",
+        "name": "sliced ripe banana",
+        "note": "about 2 small or 1 medium"
+      },
+      {
+        "q": 2,
+        "u": "cup",
+        "name": "baby spinach",
+        "note": "lightly packed"
+      },
+      {
+        "q": 0.75,
+        "u": "cup",
+        "name": "milk",
+        "note": "dairy or unsweetened nondairy"
+      },
+      {
+        "q": 0.25,
+        "u": "cup",
+        "name": "honey"
+      },
+      {
+        "q": 2,
+        "u": "tbsp",
+        "name": "melted butter",
+        "note": "cooled — or neutral oil or plain yogurt"
+      },
+      {
+        "q": 2,
+        "u": "large",
+        "name": "eggs"
+      },
+      {
+        "q": 1,
+        "u": "tsp",
+        "name": "vanilla extract"
+      },
+      {
+        "q": 1,
+        "u": "cup",
+        "name": "rolled oats"
+      },
+      {
+        "q": 1,
+        "u": "tsp",
+        "name": "baking soda"
+      },
+      {
+        "q": 0.125,
+        "u": "tsp",
+        "name": "salt"
+      },
+      {
+        "q": 1,
+        "u": "cup",
+        "name": "whole-wheat flour"
+      },
+      {
+        "raw": "Mini chocolate chips (optional)"
+      }
+    ],
+    "instructions": [
+      "Preheat oven to 375°F and grease a standard muffin tin well with nonstick spray.",
+      "Place all ingredients into a blender except the flour and chocolate chips.",
+      "Blend very smooth, scraping down sides as needed. Batter should be uniformly green like a smoothie.",
+      "Pulse in the flour just to combine, or stir gently.",
+      "Pour into muffin tin, filling each cup about ¾ full. Sprinkle with chocolate chips if using.",
+      "Bake 18–20 minutes, until firm to the touch and lightly browned.",
+      "Cool on a wire rack. Serve slightly warm, at room temp, or chilled."
+    ],
+    "notes": {
+      "Ingredient Swaps": [
+        "Egg-free: omit eggs, increase banana to 1½ cups total.",
+        "Gluten-free: King Arthur GF flour blend.",
+        "Dairy-free: nondairy milk and neutral oil instead of butter.",
+        "Banana-free: apple butter, thick applesauce, or sweet potato puree."
+      ],
+      "Tips": [
+        "Use very ripe bananas with brown spots for the best natural sweetness.",
+        "Mini muffins: 24-cup pan, bake 12–14 minutes.",
+        "For babies: omit honey and use 2 extra tablespoons milk; omit chocolate chips."
+      ],
+      "Storage": [
+        "Fridge 3–5 days. Freezer up to 3 months."
+      ]
+    }
+  },
+  {
+    "id": "korean-ground-beef-bowls",
+    "cat": "dinner",
+    "title": "Korean Ground Beef Bowls",
+    "author": "Meghan McMorrow · Fox and Briar",
+    "url": "foxandbriar.com/korean-ground-beef-bowls",
+    "description": "An easy and quick ground beef recipe with the flavors of beef bulgogi, served over rice with a fried egg on top.",
+    "meta": {
+      "servings": "4",
+      "prep": "10 min",
+      "cook": "15 min",
+      "total": "25 min"
+    },
+    "ingredients": [
+      {
+        "section": "Sauce"
+      },
+      {
+        "q": 0.25,
+        "u": "cup",
+        "name": "low-sodium soy sauce"
+      },
+      {
+        "q": 4,
+        "u": "cloves",
+        "name": "garlic",
+        "note": "finely minced or grated"
+      },
+      {
+        "q": 1,
+        "u": "tbsp",
+        "name": "sesame oil"
+      },
+      {
+        "q": 2,
+        "u": "tbsp",
+        "name": "brown sugar"
+      },
+      {
+        "q": 1,
+        "u": "tbsp",
+        "name": "rice vinegar"
+      },
+      {
+        "q": 1,
+        "u": "tbsp",
+        "name": "grated ginger"
+      },
+      {
+        "q": 1,
+        "u": "tsp",
+        "name": "chili garlic sauce"
+      },
+      {
+        "section": "Beef Bowls"
+      },
+      {
+        "q": 1.5,
+        "u": "lb",
+        "name": "ground beef"
+      },
+      {
+        "q": 3,
+        "u": "",
+        "name": "green onions",
+        "note": "sliced; green and white parts separated"
+      },
+      {
+        "q": 4,
+        "u": "large",
+        "name": "eggs"
+      },
+      {
+        "q": 4,
+        "u": "tsp",
+        "name": "butter"
+      },
+      {
+        "q": 1.5,
+        "u": "cup",
+        "name": "cooked rice"
+      },
+      {
+        "raw": "Sesame seeds (optional)"
+      }
+    ],
+    "instructions": [
+      "Whisk sauce ingredients together and set aside.",
+      "Place a large pan over medium-high heat. Add ground beef and brown, breaking it up, until done — about 4–6 minutes.",
+      "Pour sauce over the meat and bring to a simmer. Stir in the white parts of the green onions; cook 3–4 minutes.",
+      "Meanwhile, fry the eggs: heat a frying pan over medium, add butter. When melted, crack eggs in. Reduce heat to low. Fry until whites are set and yolks done to your liking, about 4–5 minutes.",
+      "Assemble: rice in a bowl, top with beef, then fried egg.",
+      "Garnish with green parts of green onions and sesame seeds."
+    ],
+    "notes": {
+      "Nutrition (per serving)": [
+        "605 calories · 37g protein · 9g carbs · 46g fat · 848mg sodium"
+      ]
+    }
+  },
+  {
+    "id": "italian-sausage-tortellini-soup",
+    "cat": "dinner",
+    "title": "Italian Sausage Tortellini Soup",
+    "author": "Natasha Bull · Salt & Lavender",
+    "url": "saltandlavender.com/italian-sausage-tortellini-soup",
+    "description": "Italian sausage and cheesy tortellini in a creamy tomato broth. Minimal prep, comfort food at its best.",
+    "meta": {
+      "servings": "6",
+      "prep": "10 min",
+      "cook": "30 min",
+      "total": "40 min"
+    },
+    "ingredients": [
+      {
+        "q": 16,
+        "u": "oz",
+        "name": "Italian sausage",
+        "note": "mild; ground or removed from casings"
+      },
+      {
+        "q": 0.5,
+        "u": "",
+        "name": "medium onion",
+        "note": "chopped finely"
+      },
+      {
+        "q": 2,
+        "u": "sticks",
+        "name": "celery",
+        "note": "chopped finely"
+      },
+      {
+        "q": 2,
+        "u": "tbsp",
+        "name": "flour"
+      },
+      {
+        "q": 3.5,
+        "u": "cloves",
+        "name": "garlic",
+        "note": "3–4 cloves, minced"
+      },
+      {
+        "q": 4,
+        "u": "cup",
+        "name": "chicken broth"
+      },
+      {
+        "q": 28,
+        "u": "oz",
+        "name": "diced tomatoes with juices",
+        "note": "1 can"
+      },
+      {
+        "q": 0.25,
+        "u": "tsp",
+        "name": "Italian seasoning"
+      },
+      {
+        "q": 2,
+        "u": "cup",
+        "name": "refrigerated cheese tortellini",
+        "prefix": "generous "
+      },
+      {
+        "q": 1,
+        "u": "cup",
+        "name": "heavy cream"
+      },
+      {
+        "q": 2,
+        "u": "cup",
+        "name": "fresh baby spinach",
+        "note": "packed; optional"
+      },
+      {
+        "raw": "Salt & pepper to taste"
+      }
+    ],
+    "instructions": [
+      "Add sausage to a large soup pot. Sauté over medium-high, stirring occasionally, 7–10 minutes until browned all over.",
+      "Remove sausage to a paper-towel-lined plate. Leave about 1 tablespoon fat in the pot.",
+      "Add onion and celery; cook 4–5 minutes.",
+      "Add flour and garlic; cook 1 minute, stirring constantly.",
+      "Slowly add chicken broth, stirring until flour dissolves.",
+      "Add tomatoes and Italian seasoning. Add sausage back in. Bring to a gentle boil.",
+      "Once boiling, add tortellini, reduce to gentle simmer, cook 5 minutes.",
+      "Stir in cream; cook another 5 minutes.",
+      "Stir in spinach; season with salt and pepper."
+    ],
+    "notes": {
+      "Substitutions & Variations": [
+        "Try chicken or turkey sausage to change it up.",
+        "Use petite diced tomatoes or tomato sauce in place of regular.",
+        "Add crushed red pepper flakes or use hot Italian sausage for spice.",
+        "Sub kale for spinach (cook a little longer)."
+      ],
+      "Storage": [
+        "Eat within a couple of days; tortellini soaks up broth over time.",
+        "For leftovers, add fresh tortellini to individual portions only when reheating.",
+        "Freezes best if you leave out cream, spinach, and tortellini."
+      ],
+      "Serve With": [
+        "Garlic bread.",
+        "A simple Caesar or Parmesan-arugula salad.",
+        "Shaved fresh parmesan on top."
+      ]
+    }
+  },
+  {
+    "id": "bon-appetit-bolognese",
+    "cat": "dinner",
+    "title": "Bon Appétit's Best Bolognese",
+    "author": "Andy Baraghani via Bon Appétit",
+    "url": "christygraves.com/2020/03/22/bon-appetits-best-bolognese",
+    "description": "A slow-simmered bolognese that's perfect for Christmas Eve or Sunday family dinner. Resist the urge to tinker — it's gold as-is.",
+    "meta": {
+      "servings": "6",
+      "prep": "1 hr",
+      "cook": "3 hr",
+      "total": "~4 hr"
+    },
+    "ingredients": [
+      {
+        "q": 1,
+        "u": "",
+        "name": "medium onion",
+        "note": "chopped"
+      },
+      {
+        "q": 1,
+        "u": "stalk",
+        "name": "celery",
+        "note": "chopped"
+      },
+      {
+        "q": 1,
+        "u": "",
+        "name": "small carrot",
+        "note": "peeled and chopped"
+      },
+      {
+        "q": 3,
+        "u": "tbsp",
+        "name": "extra-virgin olive oil"
+      },
+      {
+        "q": 1,
+        "u": "lb",
+        "name": "ground beef chuck",
+        "note": "20% fat, patted dry"
+      },
+      {
+        "raw": "Kosher salt"
+      },
+      {
+        "q": 3,
+        "u": "oz",
+        "name": "pancetta",
+        "note": "thinly sliced, finely chopped"
+      },
+      {
+        "q": 1,
+        "u": "cup",
+        "name": "dry white wine"
+      },
+      {
+        "q": 0.333,
+        "u": "cup",
+        "name": "tomato paste"
+      },
+      {
+        "q": 1,
+        "u": "",
+        "name": "bay leaf"
+      },
+      {
+        "raw": "Pinch of finely grated nutmeg"
+      },
+      {
+        "q": 2,
+        "u": "cup",
+        "name": "chicken stock",
+        "note": "or more; low-sodium"
+      },
+      {
+        "q": 1,
+        "u": "cup",
+        "name": "whole milk"
+      },
+      {
+        "q": 1,
+        "u": "lb",
+        "name": "fresh tagliatelle",
+        "note": "or pappardelle, or dry rigatoni"
+      },
+      {
+        "q": 2,
+        "u": "oz",
+        "name": "finely grated Parmesan",
+        "note": "about ½ cup, plus more for serving"
+      }
+    ],
+    "instructions": [
+      "Pulse onion, celery, and carrot in a food processor until very finely chopped. Transfer to a small bowl.",
+      "Heat oil in a large pot over medium. Break beef into 1½-inch clumps and add; season lightly with salt. Cook, stirring occasionally but NOT breaking the meat apart, until lightly browned, 6–8 minutes. Transfer beef to a medium bowl.",
+      "Wipe out pot. Cook pancetta over medium until it's released some fat and is crisp, 6–8 minutes. Add the onion mixture; cook until vegetables are very soft, 6–8 minutes.",
+      "Return beef to pot and pour in wine. Reduce heat to medium-low and cook, smashing beef with a wooden spoon, until wine has evaporated and the meat is finely ground, 12–15 minutes. Add tomato paste, bay leaf, and nutmeg; cook 5 minutes.",
+      "Pour in stock and milk; add a pinch of salt. Reduce heat to lowest setting and cook, uncovered, stirring occasionally, until meat is very tender, 2 to 2½ hours. If liquid reduces before meat is tender, add an extra ½ cup stock. Discard bay leaf.",
+      "Cook pasta in salted boiling water. Fresh: about 3 minutes. Dry: very al dente, about 2 minutes less than package directions.",
+      "Transfer pasta to the sauce. Add 1 cup pasta cooking liquid and ½ cup Parmesan. Increase heat to medium, simmer, toss constantly until pasta is al dente, about 2 minutes.",
+      "Transfer to a platter and top with more Parmesan."
+    ],
+    "notes": {
+      "Make Ahead": [
+        "Sauce can be made up to 4 days ahead. Cover and chill."
+      ]
+    }
+  },
+  {
+    "id": "mongolian-ground-beef-noodles",
+    "cat": "dinner",
+    "title": "Mongolian Ground Beef Noodles",
+    "author": "Jennifer Sikora · Jen Around the World",
+    "url": "jenaroundtheworld.com/mongolian-ground-beef-noodles",
+    "description": "A 15-minute weeknight dinner. Sweet, savory, slightly spicy noodles tossed with seasoned ground beef.",
+    "meta": {
+      "servings": "8",
+      "prep": "5 min",
+      "cook": "10 min",
+      "total": "15 min"
+    },
+    "ingredients": [
+      {
+        "q": 1,
+        "u": "lb",
+        "name": "lean ground beef"
+      },
+      {
+        "q": 4,
+        "u": "tsp",
+        "name": "minced ginger"
+      },
+      {
+        "q": 6,
+        "u": "cloves",
+        "name": "garlic",
+        "note": "minced"
+      },
+      {
+        "q": 0.5,
+        "u": "cup",
+        "name": "low-sodium soy sauce"
+      },
+      {
+        "q": 0.5,
+        "u": "cup",
+        "name": "beef broth"
+      },
+      {
+        "q": 0.25,
+        "u": "cup",
+        "name": "brown sugar"
+      },
+      {
+        "q": 6,
+        "u": "tbsp",
+        "name": "hoisin sauce"
+      },
+      {
+        "q": 0.5,
+        "u": "tsp",
+        "name": "red pepper flakes"
+      },
+      {
+        "q": 0.5,
+        "u": "tsp",
+        "name": "black pepper"
+      },
+      {
+        "q": 12,
+        "u": "oz",
+        "name": "linguine noodles",
+        "note": "1 box"
+      },
+      {
+        "q": 4,
+        "u": "",
+        "name": "green onions",
+        "note": "diced; garnish"
+      },
+      {
+        "raw": "Toasted sesame seeds (garnish)"
+      }
+    ],
+    "instructions": [
+      "In a high-sided skillet over medium-high, brown ground beef with ginger and garlic until cooked through. Drain fat and return pan to heat.",
+      "While the beef cooks, start a pot of salted water for the pasta.",
+      "Combine soy sauce, beef broth, brown sugar, red pepper flakes, black pepper, and hoisin sauce in a small dish. Pour into the beef.",
+      "Let sauté in the pan about 3 minutes so the beef absorbs the flavors.",
+      "Once pasta is done, transfer the noodles to the beef mixture. Toss thoroughly and cook a couple more minutes for the sauce to thicken.",
+      "Top with green onions and toasted sesame seeds."
+    ],
+    "notes": {
+      "Author's Notes": [
+        "The original recipe used cornstarch — Jen skips it here because the pasta starch thickens the sauce.",
+        "The sauce is doubled because the noodles soak it up."
+      ],
+      "Variations": [
+        "Add frozen broccoli florets and peas and carrots.",
+        "Substitute rice noodles for a different texture.",
+        "Sauté mushrooms and onions and add with the beef."
+      ]
+    }
+  },
+  {
+    "id": "sweet-potato-casserole",
+    "cat": "sides",
+    "title": "Healthy Sweet Potato Casserole with Pecan Oat Streusel",
+    "author": "Monique Volz · Ambitious Kitchen",
+    "url": "ambitiouskitchen.com/lightened-sweet-potato-casserole-pecan-oat-streusel",
+    "description": "A lightened-up sweet potato casserole with a crunchy pecan oatmeal streusel instead of marshmallows. Easily made vegan and gluten-free.",
+    "meta": {
+      "servings": "8",
+      "prep": "1 hr",
+      "cook": "30 min",
+      "total": "1 hr 30 min"
+    },
+    "ingredients": [
+      {
+        "section": "Potatoes"
+      },
+      {
+        "q": 3,
+        "u": "lb",
+        "name": "sweet potatoes",
+        "note": "about 3 large or 5 medium"
+      },
+      {
+        "q": 2.5,
+        "u": "tbsp",
+        "name": "pure maple syrup"
+      },
+      {
+        "q": 0.5,
+        "u": "cup",
+        "name": "unsweetened almond milk",
+        "note": "or milk of choice"
+      },
+      {
+        "q": 1,
+        "u": "tbsp",
+        "name": "vanilla extract"
+      },
+      {
+        "q": 1,
+        "u": "large",
+        "name": "egg",
+        "note": "omit if vegan"
+      },
+      {
+        "q": 1,
+        "u": "tsp",
+        "name": "cinnamon"
+      },
+      {
+        "q": 0.25,
+        "u": "tsp",
+        "name": "nutmeg"
+      },
+      {
+        "raw": "Pinch of allspice"
+      },
+      {
+        "q": 0.25,
+        "u": "tsp",
+        "name": "salt"
+      },
+      {
+        "section": "Pecan Oat Streusel"
+      },
+      {
+        "q": 0.25,
+        "u": "cup",
+        "name": "whole wheat pastry flour",
+        "note": "or regular flour"
+      },
+      {
+        "q": 0.333,
+        "u": "cup",
+        "name": "rolled oats"
+      },
+      {
+        "q": 0.333,
+        "u": "cup",
+        "name": "brown sugar",
+        "note": "packed; or coconut sugar"
+      },
+      {
+        "q": 0.5,
+        "u": "cup",
+        "name": "coarsely chopped pecans"
+      },
+      {
+        "q": 3,
+        "u": "tbsp",
+        "name": "melted butter",
+        "note": "or vegan butter or coconut oil"
+      }
+    ],
+    "instructions": [
+      "Preheat oven to 400°F.",
+      "Roast sweet potatoes: wash and poke 4–5 fork holes in each. Place on a foil-lined baking sheet and roast 45 minutes to 1 hour, until very fork tender. Cool 5–10 minutes. Lower oven to 350°F.",
+      "Spray an 8×8 pan or 1½- to 2-quart baking dish with nonstick spray.",
+      "Cut open potatoes and discard skins. Place flesh in a large bowl with maple syrup, almond milk, vanilla, egg, cinnamon, nutmeg, allspice, and salt. Beat with an electric mixer until smooth. Pour into the prepared pan.",
+      "Topping: whisk flour, oats, brown sugar, and pecans. Use a fork to stir in melted butter until a crumb forms. Sprinkle evenly over the sweet potatoes.",
+      "Bake 25–30 minutes, until top is lightly golden brown. Cool 5–10 minutes before serving."
+    ],
+    "notes": {
+      "Substitutions": [
+        "Butter: coconut oil or vegan butter.",
+        "Brown sugar: coconut sugar.",
+        "Vegan: vegan butter or coconut oil; skip the egg."
+      ],
+      "Make Ahead": [
+        "Assemble 1–2 days in advance, cover, refrigerate. Bake as directed.",
+        "Cover and refrigerate up to 4 days."
+      ]
+    }
+  },
+  {
+    "id": "honey-lime-fruit-salad",
+    "cat": "dessert",
+    "title": "Honey Lime Fruit Salad",
+    "author": "Emily Dixon · One Lovely Life",
+    "url": "onelovelylife.com/honey-lime-fruit-salad",
+    "description": "A signature fruit salad that's perfect for potlucks, barbecues, family parties, and weeknights.",
+    "meta": {
+      "yield": "6 cups",
+      "prep": "10 min",
+      "total": "10 min"
+    },
+    "ingredients": [
+      {
+        "q": 2,
+        "u": "cup",
+        "name": "green grapes",
+        "note": "halved if large"
+      },
+      {
+        "q": 2,
+        "u": "cup",
+        "name": "strawberries",
+        "note": "quartered or sliced"
+      },
+      {
+        "q": 2,
+        "u": "cup",
+        "name": "blueberries"
+      },
+      {
+        "q": 2,
+        "u": "tbsp",
+        "name": "honey",
+        "note": "use agave for vegan"
+      },
+      {
+        "raw": "Zest of 1 lime (about 2 teaspoons)"
+      },
+      {
+        "raw": "Juice of 1 lime (about 2 tablespoons)"
+      }
+    ],
+    "instructions": [
+      "Combine grapes, strawberries, and blueberries in a large bowl.",
+      "Drizzle with honey, lime juice, and lime zest.",
+      "Stir gently to coat. Taste and add more honey or lime juice as desired.",
+      "Serve right away, or store leftovers in an airtight container in the fridge for 2–3 days."
+    ],
+    "notes": {
+      "Variations": [
+        "Add 1–2 tablespoons fresh mint — lime + mint is magic.",
+        "Try kiwi, raspberries, blackberries, peaches, or pineapple.",
+        "Make it vegan with agave instead of honey."
+      ],
+      "Tips": [
+        "Halve grapes and quarter berries for even sizing.",
+        "Make-ahead: whisk dressing in advance, store separately, assemble just before serving.",
+        "Leftovers: blend with ice for a slushy smoothie, or freeze in popsicle molds."
+      ]
+    }
+  },
+  {
+    "id": "blueberry-pretzel-bites",
+    "cat": "dessert",
+    "title": "Blueberry Pretzel Bites",
+    "author": "Courtney Cotromano · Acts of Sourdough",
+    "url": "actsofsourdough.com/blogs/blog/blueberry-pretzel-bites",
+    "description": "Soft, chewy pretzel bites studded with fresh blueberries and coated in cinnamon sugar.",
+    "meta": {
+      "servings": "8",
+      "prep": "10 min",
+      "cook": "15 min",
+      "rest": "2 hr",
+      "total": "~2 hr 30 min"
+    },
+    "ingredients": [
+      {
+        "section": "Dough"
+      },
+      {
+        "q": 4,
+        "u": "cup",
+        "name": "all-purpose flour"
+      },
+      {
+        "q": 1,
+        "u": "tsp",
+        "name": "salt"
+      },
+      {
+        "q": 2,
+        "u": "tsp",
+        "name": "active yeast"
+      },
+      {
+        "q": 1,
+        "u": "cup",
+        "name": "warm water"
+      },
+      {
+        "q": 0.875,
+        "u": "cup",
+        "name": "fresh blueberries",
+        "note": "¾ to 1 cup"
+      },
+      {
+        "q": 1,
+        "u": "cup",
+        "name": "sourdough discard"
+      },
+      {
+        "q": 2,
+        "u": "tbsp",
+        "name": "honey"
+      },
+      {
+        "q": 1,
+        "u": "tbsp",
+        "name": "baking soda",
+        "note": "for boiling"
+      },
+      {
+        "q": 1,
+        "u": "tbsp",
+        "name": "sugar",
+        "note": "for boiling"
+      },
+      {
+        "section": "Cinnamon Sugar Coating"
+      },
+      {
+        "q": 3,
+        "u": "tbsp",
+        "name": "melted butter"
+      },
+      {
+        "q": 0.333,
+        "u": "cup",
+        "name": "granulated sugar"
+      },
+      {
+        "q": 1,
+        "u": "tsp",
+        "name": "cinnamon"
+      }
+    ],
+    "instructions": [
+      "In a stand mixer bowl, whisk flour, salt, and yeast.",
+      "Add blueberries; mix until coated with flour.",
+      "In a small bowl, mix water, honey, and sourdough discard until discard is fully dissolved.",
+      "With mixer on low, slowly add the discard mixture. Knead on low 5–10 minutes.",
+      "Cover with a tea towel and let rest 2 hours, or until doubled.",
+      "Punch dough down. Cut into 4 equal pieces. Roll each into a log; cut logs into 1-inch pieces.",
+      "Bring a large pot of water to a rolling boil. Add baking soda and sugar. Boil pretzel bites 45 seconds. Transfer to a parchment-lined baking sheet.",
+      "Preheat oven to 425°F. Bake 13–15 minutes, shaking the pan halfway through.",
+      "Melt butter and pour over the baked bites. Toss in cinnamon sugar.",
+      "Enjoy as is, or drizzle with vanilla glaze."
+    ],
+    "notes": {
+      "Tips": [
+        "This is a blueberry bagel recipe with a twist — same dough works for both.",
+        "Fresh blueberries work better than frozen here.",
+        "A bench scraper is the easiest tool for cutting dough."
+      ],
+      "Make-Ahead": [
+        "Evening prep: do everything up to boiling, refrigerate overnight. In the morning, boil and bake."
+      ]
+    }
+  },
+  {
+    "id": "dairy-free-dinner-rolls",
+    "cat": "bread",
+    "title": "Dairy Free Dinner Rolls",
+    "author": "ElissaBeth · The Taste of Kosher",
+    "url": "thetasteofkosher.com/dairy-free-dinner-rolls",
+    "description": "Light and fluffy dairy-free dinner rolls perfect for Sunday dinner or a Thanksgiving spread.",
+    "meta": {
+      "yield": "14–16 rolls",
+      "prep": "10 min",
+      "cook": "20 min",
+      "total": "2 hr"
+    },
+    "ingredients": [
+      {
+        "q": 1.5,
+        "u": "tsp",
+        "name": "instant yeast"
+      },
+      {
+        "q": 2,
+        "u": "tbsp",
+        "name": "white sugar"
+      },
+      {
+        "q": 1,
+        "u": "cup",
+        "name": "warm water",
+        "note": "235 mL"
+      },
+      {
+        "q": 1,
+        "u": "large",
+        "name": "egg"
+      },
+      {
+        "q": 2,
+        "u": "tbsp",
+        "name": "oil"
+      },
+      {
+        "q": 1,
+        "u": "tsp",
+        "name": "salt"
+      },
+      {
+        "q": 3.25,
+        "u": "cup",
+        "name": "all-purpose flour",
+        "note": "3 to 3½ cups (385–450g)"
+      }
+    ],
+    "instructions": [
+      "Place yeast, sugar, and warm water in the bowl of a stand mixer. Let sit 5–10 minutes until foamy.",
+      "Add egg, oil, salt, and 3 cups flour. Knead until smooth and slightly tacky, adding more flour as needed.",
+      "Cover with a damp towel and let rise 1 hour, or until doubled.",
+      "Grease a 9×13 baking pan.",
+      "Punch dough down. Divide into 14–16 pieces.",
+      "Shape: cup your hand over a piece and roll in a circular motion. Place in the pan.",
+      "Let rise 1 hour, or until doubled.",
+      "Preheat oven to 350°F. Bake 20 minutes, until lightly browned.",
+      "Brush tops with oil or vegan butter. Let sit 5 minutes before moving to a cooling rack."
+    ],
+    "notes": {
+      "Tips": [
+        "For extra-soft rolls, replace ¼ cup of the flour with ¼ cup cornstarch.",
+        "Make-ahead: place dough in the fridge for the first rise."
+      ]
+    }
+  },
+  {
+    "id": "sourdough-discard-sandwich-bread",
+    "cat": "bread",
+    "title": "Sourdough Discard Sandwich Bread",
+    "author": "Amy Coyne · Amy Bakes Bread",
+    "url": "amybakesbread.com/the-best-sourdough-discard-sandwich-bread",
+    "description": "Light, fluffy, super soft sandwich bread using up sourdough discard. Use older discard for tangier flavor.",
+    "meta": {
+      "yield": "2 loaves",
+      "prep": "30 min",
+      "cook": "40 min",
+      "total": "~3 hr 10 min"
+    },
+    "weightAuthoritative": true,
+    "ingredients": [
+      {
+        "gram": 200,
+        "q": 1,
+        "u": "cup",
+        "name": "sourdough discard",
+        "note": "100% hydration; scant 1 cup"
+      },
+      {
+        "gram": 330,
+        "q": 1.333,
+        "u": "cup",
+        "name": "warm water",
+        "note": "95–100°F"
+      },
+      {
+        "gram": 15,
+        "q": 1,
+        "u": "tbsp",
+        "name": "instant yeast"
+      },
+      {
+        "gram": 160,
+        "q": 0.5,
+        "u": "cup",
+        "name": "honey"
+      },
+      {
+        "gram": 50,
+        "q": 0.25,
+        "u": "cup",
+        "name": "coconut oil",
+        "note": "or any neutral oil"
+      },
+      {
+        "gram": 50,
+        "q": 1,
+        "u": "large",
+        "name": "egg"
+      },
+      {
+        "gram": 20,
+        "q": 1,
+        "u": "tbsp",
+        "name": "salt"
+      },
+      {
+        "gram": 850,
+        "q": 6.5,
+        "u": "cup",
+        "name": "bread flour",
+        "note": "6–7 cups"
+      }
+    ],
+    "instructions": [
+      "In a stand mixer with dough hook, add warm water, honey, and yeast. Watch for the yeast to activate.",
+      "Add discard, salt, egg, coconut oil, and most of the flour. Knead 8–10 minutes, gradually adding the rest of the flour. Dough should pull away from the sides, feel tacky but not overly sticky.",
+      "First rise: cover and let rise 1–2 hours until doubled.",
+      "Punch down and divide into two equal portions (about 800g each).",
+      "Shape: pat one portion into a rectangle (about 7\"×12–14\"). Roll up tightly, pinching the seam. Pinch and round the ends. Place seam-side down in a greased loaf pan.",
+      "Second rise: cover and rise 1 to 1½ hours, until risen above the pan edge. Poke test: if dough springs back immediately, more time needed.",
+      "Preheat oven to 350°F. Bake 40 minutes, until golden brown with internal temp 195–200°F. Cool in pans 5–10 minutes, then move to a rack to cool completely before slicing."
+    ],
+    "notes": {
+      "Substitutions": [
+        "Honey: cut in half if too sweet.",
+        "Coconut oil: solid or liquid; butter or any neutral oil works.",
+        "Bread flour: 12.5% protein is ideal.",
+        "Whole wheat: substitute about half the flour."
+      ],
+      "Amy's Tips": [
+        "Instant yeast forgives overproofing — reshape and let rise again.",
+        "Underproofed bread bakes dense; overproofed has uneven holes and sunken top."
+      ],
+      "Storage": [
+        "Slice once cooled. Store in a bread bag in the freezer.",
+        "Toast or thaw for sandwiches. Excellent for grilled cheese and French toast."
+      ]
+    }
+  },
+  {
+    "id": "easiest-pizza",
+    "cat": "bread",
+    "title": "The Easiest Pizza You'll Ever Make",
+    "author": "Brinna Sands · King Arthur Baking",
+    "url": "kingarthurbaking.com/recipes/the-easiest-pizza-youll-ever-make-recipe",
+    "description": "A simple pizza dough that's great for a make-your-own-pizza party. Each guest tops their own.",
+    "meta": {
+      "yield": "3–4 (12\") pizzas",
+      "prep": "15 min",
+      "cook": "15–20 min",
+      "total": "2 hr"
+    },
+    "weightAuthoritative": true,
+    "ingredients": [
+      {
+        "gram": 454,
+        "q": 2,
+        "u": "cup",
+        "name": "lukewarm water"
+      },
+      {
+        "gram": 25,
+        "q": 2,
+        "u": "tbsp",
+        "name": "olive oil",
+        "note": "optional"
+      },
+      {
+        "gram": 18,
+        "q": 1,
+        "u": "tbsp",
+        "name": "table salt"
+      },
+      {
+        "gram": 12,
+        "q": 1,
+        "u": "tbsp",
+        "name": "granulated sugar"
+      },
+      {
+        "gram": 9,
+        "q": 1,
+        "u": "tbsp",
+        "name": "active dry yeast",
+        "note": "or instant; or 1 packet"
+      },
+      {
+        "gram": 720,
+        "q": 6,
+        "u": "cup",
+        "name": "all-purpose flour",
+        "note": "King Arthur Unbleached"
+      },
+      {
+        "gram": 12,
+        "q": 2,
+        "u": "tbsp",
+        "name": "King Arthur Pizza Dough Flavor",
+        "note": "optional"
+      }
+    ],
+    "instructions": [
+      "Combine lukewarm water, oil, salt, sugar, and yeast.",
+      "Add the flour. Mix by hand, mixer, or bread machine (dough cycle), adding more water as needed for a soft dough. Knead 7–10 minutes until smooth and elastic.",
+      "Place in a lightly greased bowl, cover, and let rise 1–2 hours.",
+      "Transfer to a lightly greased surface; gently deflate. Divide into 4 (medium-thick) or 3 pieces (thicker). Roll each into a 12\" round.",
+      "Transfer each round to parchment. Place on a pizza pan or baking sheet.",
+      "Preheat oven to 450°F. If using a stone or steel, preheat on the center rack.",
+      "Brush each crust with olive oil; spread sauce; add toppings; sprinkle with cheese.",
+      "Bake one at a time, 15–20 minutes, until golden brown and bubbly.",
+      "Transfer to a cooling rack right away. Wait about 10 minutes before serving.",
+      "Refrigerate leftovers in an airtight container for several days."
+    ],
+    "notes": {
+      "Tips": [
+        "Cheese choices beyond mozzarella: Fontina, cheddar, Jack, provolone, Gouda, Muenster.",
+        "Flexible: rise once, deflate, refrigerate overnight, stretch the next day."
+      ]
+    }
+  },
+  {
+    "id": "beautiful-burger-buns",
+    "cat": "bread",
+    "title": "Beautiful Burger Buns",
+    "author": "\"Moomie\" (Ellen Dorsey) · King Arthur Baking",
+    "url": "kingarthurbaking.com/recipes/beautiful-burger-buns-recipe",
+    "description": "The recipe that started a fan club. Soft, slightly sweet, golden-yellow buns from butter and egg.",
+    "meta": {
+      "yield": "8 large buns",
+      "prep": "25 min",
+      "cook": "15 min",
+      "total": "2 hr 40 min"
+    },
+    "weightAuthoritative": true,
+    "ingredients": [
+      {
+        "section": "Buns"
+      },
+      {
+        "gram": 420,
+        "q": 3.5,
+        "u": "cup",
+        "name": "all-purpose flour",
+        "note": "King Arthur Unbleached"
+      },
+      {
+        "gram": 198,
+        "q": 0.875,
+        "u": "cup",
+        "name": "water",
+        "note": "lukewarm; ¾ cup + 2 tbsp"
+      },
+      {
+        "gram": 28,
+        "q": 2,
+        "u": "tbsp",
+        "name": "butter",
+        "note": "room temperature"
+      },
+      {
+        "q": 1,
+        "u": "large",
+        "name": "egg"
+      },
+      {
+        "gram": 50,
+        "q": 0.25,
+        "u": "cup",
+        "name": "granulated sugar"
+      },
+      {
+        "q": 1.25,
+        "u": "tsp",
+        "name": "table salt"
+      },
+      {
+        "gram": 9,
+        "q": 1,
+        "u": "tbsp",
+        "name": "instant yeast"
+      },
+      {
+        "section": "Butter Glaze"
+      },
+      {
+        "gram": 43,
+        "q": 3,
+        "u": "tbsp",
+        "name": "butter",
+        "note": "melted; divided"
+      },
+      {
+        "section": "Seed Topping (optional)"
+      },
+      {
+        "q": 1,
+        "u": "large",
+        "name": "egg white",
+        "note": "whisked with 2 tbsp cold water"
+      },
+      {
+        "raw": "Sesame seeds, or seeds of your choice"
+      }
+    ],
+    "instructions": [
+      "Weigh flour, or spoon into a cup and sweep off any excess.",
+      "Mix and knead all dough ingredients to a soft, smooth dough.",
+      "Cover and let rise until nearly doubled, 1–2 hours.",
+      "Gently deflate dough; divide into 8 pieces (about 100g each). Shape each into a ball.",
+      "Flatten each ball until about 3\" in diameter.",
+      "Place on a lightly greased or parchment-lined baking sheet. Cover and let rise 1 hour. Preheat oven to 375°F.",
+      "Brush buns with half the melted butter. For seeded buns, brush egg white mixture over the butter; sprinkle with seeds.",
+      "Bake 15–18 minutes, until golden. Brush with remaining melted butter.",
+      "Cool on a rack before slicing horizontally.",
+      "Store wrapped at room temp for several days; freeze for longer."
+    ],
+    "notes": {
+      "Tips": [
+        "Smaller buns: divide into 12 pieces (66g each), bake 12–15 minutes.",
+        "Slider buns: divide into 24 pieces (33g each), bake 12–15 minutes."
+      ]
+    }
+  }
+]

@@ -1,0 +1,159 @@
+/*
+ * Design tokens.
+ *
+ * The palette is a lifted take on primaries: coral where you'd expect red,
+ * amber for yellow, a deep forest for green, and a saturated cobalt for blue.
+ * Every hue sits at a similar perceived brightness so a wall of them reads as
+ * one family rather than a box of crayons.
+ */
+
+:root {
+  /* --- Brand hues ------------------------------------------------- */
+  --coral: #ff6b5a;
+  --coral-deep: #e8452f;
+  --coral-soft: #fff0ed;
+
+  --amber: #ffb020;
+  --amber-deep: #e08c00;
+  --amber-soft: #fff6e3;
+
+  --forest: #12855f;
+  --forest-deep: #0b6146;
+  --forest-soft: #e6f5ef;
+
+  --cobalt: #2f6bea;
+  --cobalt-deep: #1c4fc4;
+  --cobalt-soft: #ecf1fe;
+
+  --violet: #7c4dff;
+  --violet-deep: #5b2ee5;
+  --violet-soft: #f2eeff;
+
+  --teal: #0fa8a0;
+  --teal-soft: #e4f6f5;
+
+  --rose: #f0567a;
+  --rose-soft: #ffedf1;
+
+  --tangerine: #ff8a34;
+  --tangerine-soft: #fff1e5;
+
+  /* --- Surfaces ---------------------------------------------------- */
+  --bg: #fdfcfa;
+  --bg-tint-a: rgba(255, 107, 90, 0.07);
+  --bg-tint-b: rgba(47, 107, 234, 0.07);
+  --bg-tint-c: rgba(255, 176, 32, 0.08);
+
+  --surface: #ffffff;
+  --surface-2: #f6f5f2;
+  --surface-3: #edebe6;
+  --surface-inset: rgba(23, 23, 30, 0.04);
+
+  /* --- Ink ---------------------------------------------------------- */
+  --ink: #17171e;
+  --ink-2: #4b4b56;
+  --ink-3: #7c7c88;
+  --ink-4: #a8a8b3;
+  --on-accent: #ffffff;
+
+  --line: rgba(23, 23, 30, 0.08);
+  --line-strong: rgba(23, 23, 30, 0.14);
+
+  /* --- Elevation ---------------------------------------------------- */
+  --shadow-sm: 0 1px 2px rgba(23, 23, 30, 0.05), 0 2px 6px rgba(23, 23, 30, 0.04);
+  --shadow-md: 0 2px 4px rgba(23, 23, 30, 0.04), 0 8px 20px rgba(23, 23, 30, 0.07);
+  --shadow-lg: 0 4px 8px rgba(23, 23, 30, 0.05), 0 18px 44px rgba(23, 23, 30, 0.1);
+  --shadow-xl: 0 8px 16px rgba(23, 23, 30, 0.06), 0 32px 80px rgba(23, 23, 30, 0.16);
+  --shadow-pop: 0 10px 30px rgba(255, 107, 90, 0.28);
+
+  /* --- Radii -------------------------------------------------------- */
+  --r-xs: 8px;
+  --r-sm: 12px;
+  --r-md: 18px;
+  --r-lg: 26px;
+  --r-xl: 34px;
+  --r-full: 999px;
+
+  /* --- Spacing ------------------------------------------------------ */
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 22px;
+  --sp-6: 30px;
+  --sp-7: 40px;
+  --sp-8: 56px;
+
+  /* --- Type --------------------------------------------------------- */
+  --font: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+
+  /* --- Chrome sizing ------------------------------------------------ */
+  --topbar-h: 92px;
+  --nav-h: 88px;
+  --page-pad: 22px;
+
+  /* --- Motion ------------------------------------------------------- */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --t-fast: 140ms;
+  --t-mid: 260ms;
+  --t-slow: 480ms;
+}
+
+/* Night mode. Same hues, lifted a touch so they still sing on a dark ground. */
+:root[data-theme='dark'] {
+  --coral: #ff8272;
+  --coral-deep: #ff6b5a;
+  --coral-soft: rgba(255, 107, 90, 0.16);
+
+  --amber: #ffc04d;
+  --amber-deep: #ffb020;
+  --amber-soft: rgba(255, 176, 32, 0.16);
+
+  --forest: #2fbc8b;
+  --forest-deep: #12855f;
+  --forest-soft: rgba(47, 188, 139, 0.16);
+
+  --cobalt: #6d9bff;
+  --cobalt-deep: #2f6bea;
+  --cobalt-soft: rgba(109, 155, 255, 0.16);
+
+  --violet: #a687ff;
+  --violet-deep: #7c4dff;
+  --violet-soft: rgba(166, 135, 255, 0.16);
+
+  --teal: #35c8c0;
+  --teal-soft: rgba(53, 200, 192, 0.16);
+
+  --rose: #ff7d9a;
+  --rose-soft: rgba(255, 125, 154, 0.16);
+
+  --tangerine: #ffa460;
+  --tangerine-soft: rgba(255, 164, 96, 0.16);
+
+  --bg: #101219;
+  --bg-tint-a: rgba(255, 107, 90, 0.1);
+  --bg-tint-b: rgba(47, 107, 234, 0.12);
+  --bg-tint-c: rgba(255, 176, 32, 0.07);
+
+  --surface: #191c26;
+  --surface-2: #212533;
+  --surface-3: #2b3040;
+  --surface-inset: rgba(255, 255, 255, 0.05);
+
+  --ink: #f4f5f8;
+  --ink-2: #c2c5d1;
+  --ink-3: #8b8f9e;
+  --ink-4: #656978;
+  --on-accent: #10121a;
+
+  --line: rgba(255, 255, 255, 0.09);
+  --line-strong: rgba(255, 255, 255, 0.16);
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.45);
+  --shadow-lg: 0 12px 36px rgba(0, 0, 0, 0.55);
+  --shadow-xl: 0 24px 70px rgba(0, 0, 0, 0.65);
+  --shadow-pop: 0 10px 30px rgba(255, 130, 114, 0.3);
+}
