@@ -32,6 +32,8 @@ export interface Celebration {
   y: number
   color: string
   big: boolean
+  /** The item's own emoji — it launches and flies across the screen. */
+  emoji?: string
 }
 
 export interface ToastMessage {
@@ -313,12 +315,18 @@ export function AppProvider({ children }: { children: ReactNode }) {
   /* Celebrations + toasts                                            */
   /* ---------------------------------------------------------------- */
 
+  // Read through a ref so `celebrate` stays referentially stable while still
+  // honouring the current setting — every call site gets the gate for free.
+  const celebrationsOn = useRef(state.core.settings.celebrate)
+  celebrationsOn.current = state.core.settings.celebrate
+
   const celebrate = useCallback((celebration: Omit<Celebration, 'id'>) => {
+    if (!celebrationsOn.current) return
     const entry = { ...celebration, id: localId() }
     setCelebrations((current) => [...current, entry])
     window.setTimeout(() => {
       setCelebrations((current) => current.filter((item) => item.id !== entry.id))
-    }, 2200)
+    }, 2600)
   }, [])
 
   const dismissToast = useCallback((id: string) => {

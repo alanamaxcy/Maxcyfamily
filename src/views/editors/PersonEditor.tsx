@@ -10,6 +10,7 @@ import { Avatar, Field, SPRING } from '../../components/ui.tsx'
 import { Icon } from '../../components/Icon.tsx'
 import { useApp } from '../../lib/store.tsx'
 import { photoUrl, uploadPhoto } from '../../lib/api.ts'
+import { PROFILE_MAX_DIMENSION, prepareImage } from '../../lib/image.ts'
 import { ColorPicker, DangerRow, EmojiPicker } from './parts.tsx'
 
 const KID_EMOJI = ['🦊', '🐻', '🐨', '🦁', '🐯', '🐸', '🦄', '🐧', '🦖', '🐙', '🦋', '🐝', '🌟', '🚀', '🌈', '⚡️']
@@ -62,7 +63,8 @@ export function PersonEditor({
     if (!file) return
     setUploading(true)
     try {
-      patch({ photoId: await uploadPhoto(file) })
+      const prepared = await prepareImage(file, PROFILE_MAX_DIMENSION)
+      patch({ photoId: await uploadPhoto(prepared.blob, prepared.type) })
     } catch (error) {
       toast(error instanceof Error ? error.message : 'Could not upload that photo')
     } finally {
@@ -115,7 +117,11 @@ export function PersonEditor({
             <button className="btn btn-ghost btn-sm" onClick={() => patch({ photoId: undefined })}>
               Use an icon instead
             </button>
-          ) : null}
+          ) : (
+            <button className="btn btn-soft btn-sm" onClick={() => fileInput.current?.click()} disabled={uploading}>
+              <Icon name="camera" size={16} /> {uploading ? 'Uploading…' : 'Add a photo'}
+            </button>
+          )}
         </div>
 
         <Field label="Name">

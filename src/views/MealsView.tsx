@@ -276,7 +276,7 @@ function ShoppingList() {
 }
 
 function ShoppingRow({ item }: { item: ShoppingItem }) {
-  const { dispatch } = useApp()
+  const { dispatch, celebrate } = useApp()
 
   return (
     <motion.div
@@ -290,7 +290,21 @@ function ShoppingRow({ item }: { item: ShoppingItem }) {
       <button
         className={`check${item.done ? ' check-on' : ''}`}
         style={{ '--tint': 'var(--forest)' } as React.CSSProperties}
-        onClick={() => dispatch({ t: 'shopping.setDone', id: item.id, done: !item.done })}
+        onClick={(event) => {
+          const done = !item.done
+          dispatch({ t: 'shopping.setDone', id: item.id, done })
+          if (done) {
+            const box = event.currentTarget.getBoundingClientRect()
+            celebrate({
+              points: 0,
+              x: box.left + box.width / 2,
+              y: box.top + box.height / 2,
+              color: 'var(--forest)',
+              big: false,
+              emoji: CATEGORY_META[item.category].emoji,
+            })
+          }
+        }}
         aria-label={item.done ? `Un-check ${item.text}` : `Check off ${item.text}`}
       >
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={3.4} strokeLinecap="round" strokeLinejoin="round">

@@ -677,6 +677,17 @@
   text-shadow: 0 2px 12px rgba(0, 0, 0, 0.14);
 }
 
+/* The emoji that launches from a ticked box and flies across the screen. */
+.emoji-shot {
+  position: fixed;
+  pointer-events: none;
+  line-height: 1;
+  will-change: transform, opacity;
+  filter: drop-shadow(0 8px 22px rgba(0, 0, 0, 0.22));
+  -webkit-user-select: none;
+  user-select: none;
+}
+
 /* ------------------------------------------------------------------ */
 /* Toast                                                               */
 /* ------------------------------------------------------------------ */

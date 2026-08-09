@@ -158,8 +158,9 @@ export function TodosView() {
 /* ------------------------------------------------------------------ */
 
 function TodoRow({ todo, today, onEdit }: { todo: Todo; today: string; onEdit: () => void }) {
-  const { state, dispatch } = useApp()
+  const { state, dispatch, celebrate } = useApp()
   const assignee = state.core.people.find((person) => person.id === todo.assigneeId)
+  const list = state.core.todoLists.find((entry) => entry.id === todo.listId)
   const overdue = todo.dueDate && !todo.done && todo.dueDate < today
 
   return (
@@ -174,7 +175,21 @@ function TodoRow({ todo, today, onEdit }: { todo: Todo; today: string; onEdit: (
       <button
         className={`check${todo.done ? ' check-on' : ''}`}
         style={{ '--tint': assignee?.color ?? 'var(--forest)' } as React.CSSProperties}
-        onClick={() => dispatch({ t: 'todo.setDone', id: todo.id, done: !todo.done, at: new Date().toISOString() })}
+        onClick={(event) => {
+          const done = !todo.done
+          dispatch({ t: 'todo.setDone', id: todo.id, done, at: new Date().toISOString() })
+          if (done) {
+            const box = event.currentTarget.getBoundingClientRect()
+            celebrate({
+              points: 0,
+              x: box.left + box.width / 2,
+              y: box.top + box.height / 2,
+              color: assignee?.color ?? list?.color ?? 'var(--forest)',
+              big: false,
+              emoji: list?.emoji ?? '✅',
+            })
+          }
+        }}
         aria-label={todo.done ? `Un-check ${todo.text}` : `Complete ${todo.text}`}
       >
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={3.4} strokeLinecap="round" strokeLinejoin="round">

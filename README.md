@@ -72,8 +72,36 @@ the gear, top right.
 
 Tapping a face opens their page: today's schedule, their routines as big
 tick-boxes, their jobs, their points and streak, and the rewards they can
-afford. Ticking something fires confetti and floats the points up off the
-checkbox.
+afford.
+
+### Ticking something off
+
+Three things fire from the box that was tapped:
+
+- a confetti burst,
+- copies of that item's own emoji thrown with the confetti,
+- one big emoji that launches and arcs the full width of the screen, trailing
+  ghosts behind it.
+
+Finishing the *last* step of a routine is louder than the steps before it: more
+confetti, a larger sprite, the routine's own icon instead of the step's, and the
+bonus points floating up. To-dos and shopping items celebrate too, using their
+list's icon and their aisle's icon.
+
+It all runs on one canvas plus a handful of DOM sprites, and the animation loop
+stops itself the moment nothing is left to draw — this thing runs for weeks
+without a reload. `prefers-reduced-motion` turns the whole thing off, as does
+the switch in Settings.
+
+### Photos
+
+Profile pictures and sleep-screen photos are resized in the browser before they
+are uploaded — 640px for avatars, 2048px for the sleep screen — and re-encoded
+to JPEG. A 1.5 MB phone photo lands as roughly 11–100 KB depending on the
+subject, which keeps Blob storage small and the iPad's decode fast. Re-encoding
+also normalises HEIC, which non-Apple browsers cannot display. EXIF rotation is
+applied, so a photo taken sideways is not stored sideways. If a file cannot be
+decoded, the original is uploaded unchanged rather than failing.
 
 ---
 

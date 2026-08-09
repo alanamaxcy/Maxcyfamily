@@ -61,7 +61,17 @@ export function PersonView({ personId, onBack }: { personId: ID; onBack: () => v
 
   const rewards = state.core.rewards.filter((reward) => !reward.archived).sort((a, b) => a.cost - b.cost)
 
-  const toggleChore = (choreId: ID, points: number, title: string, done: boolean, at: { x: number; y: number }) => {
+  const routineEmojiFor = (routineId: ID): string =>
+    state.core.routines.find((entry) => entry.id === routineId)?.emoji ?? '🎉'
+
+  const toggleChore = (
+    choreId: ID,
+    points: number,
+    title: string,
+    emoji: string,
+    done: boolean,
+    at: { x: number; y: number },
+  ) => {
     dispatch({
       t: 'chore.setDone',
       choreId,
@@ -71,17 +81,14 @@ export function PersonView({ personId, onBack }: { personId: ID; onBack: () => v
       at: new Date().toISOString(),
       entryId: newId('led'),
     })
-    if (done) {
-      celebrate({ points, x: at.x, y: at.y, color: person.color, big: false })
-      if (state.core.settings.celebrate) void 0
-    } else {
-      toast(`Unchecked ${title}`)
-    }
+    if (done) celebrate({ points, x: at.x, y: at.y, color: person.color, big: false, emoji })
+    else toast(`Unchecked ${title}`)
   }
 
   const toggleStep = (
     routineId: ID,
     stepId: ID,
+    emoji: string,
     done: boolean,
     at: { x: number; y: number },
     willFinish: boolean,
@@ -104,9 +111,12 @@ export function PersonView({ personId, onBack }: { personId: ID; onBack: () => v
         y: at.y,
         color: person.color,
         big: willFinish,
+        // The last step of a routine sends up the routine's own icon.
+        emoji: willFinish ? routineEmojiFor(routineId) : emoji,
       })
     }
   }
+
 
   const redeem = (reward: Reward) => {
     if (person.points < reward.cost) return
@@ -236,7 +246,9 @@ export function PersonView({ personId, onBack }: { personId: ID; onBack: () => v
                       color={person.color}
                       large
                       label={step.title}
-                      onChange={(at) => toggleStep(routine.id, step.id, !done, at, willFinish, routine.points)}
+                      onChange={(at) =>
+                        toggleStep(routine.id, step.id, step.emoji, !done, at, willFinish, routine.points)
+                      }
                     />
                     <span className="task-emoji">{step.emoji}</span>
                     <span className="task-title">{step.title}</span>
@@ -274,7 +286,7 @@ export function PersonView({ personId, onBack }: { personId: ID; onBack: () => v
                     color={person.color}
                     large
                     label={chore.title}
-                    onChange={(at) => toggleChore(chore.id, chore.points, chore.title, !done, at)}
+                    onChange={(at) => toggleChore(chore.id, chore.points, chore.title, chore.emoji, !done, at)}
                   />
                   <span className="task-emoji">{chore.emoji}</span>
                   <span className="task-title">{chore.title}</span>

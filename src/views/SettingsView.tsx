@@ -7,6 +7,7 @@ import { newId } from '@shared/id.ts'
 import { initialState } from '@shared/seed.ts'
 import { useApp } from '../lib/store.tsx'
 import { photoUrl, searchPlaces, uploadPhoto } from '../lib/api.ts'
+import { SLEEP_MAX_DIMENSION, prepareImage } from '../lib/image.ts'
 import { useDebounced } from '../lib/hooks.ts'
 import { Field, Segmented, Switch, SPRING } from '../components/ui.tsx'
 import { Icon } from '../components/Icon.tsx'
@@ -424,7 +425,8 @@ function SleepPhotos() {
     try {
       const uploaded: SleepPhoto[] = []
       for (const file of Array.from(files)) {
-        uploaded.push({ id: newId('sp'), photoId: await uploadPhoto(file) })
+        const prepared = await prepareImage(file, SLEEP_MAX_DIMENSION)
+        uploaded.push({ id: newId('sp'), photoId: await uploadPhoto(prepared.blob, prepared.type) })
       }
       dispatch({ t: 'settings.patch', patch: { sleep: { ...sleep, photos: [...sleep.photos, ...uploaded] } } })
       toast(`Added ${uploaded.length} photo${uploaded.length === 1 ? '' : 's'}`)

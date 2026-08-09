@@ -73,11 +73,11 @@ export async function importRecipe(url: string): Promise<{ recipe: Omit<Recipe, 
   return request(`/api/recipe-import?url=${encodeURIComponent(url)}`)
 }
 
-export async function uploadPhoto(file: File): Promise<string> {
+export async function uploadPhoto(body: Blob, contentType?: string): Promise<string> {
   const response = await fetch('/api/photos', {
     method: 'POST',
-    headers: { 'content-type': file.type || 'application/octet-stream' },
-    body: file,
+    headers: { 'content-type': contentType || body.type || 'application/octet-stream' },
+    body,
   })
   if (!response.ok) {
     const detail = (await response.json().catch(() => null)) as { error?: string } | null
