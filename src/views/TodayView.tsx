@@ -1,26 +1,23 @@
 /**
  * The home screen, and the one that's on the wall all day.
  *
- * Top half is the day's rhythm — schedule blocks and calendar events on one
- * timeline, with a live "now" marker. Bottom half is the family; tapping a face
- * opens that kid's page.
+ * Top half is the day in two columns — the household Schedule on the left and
+ * connected-calendar Events on the right, with a live "now" marker. Bottom half
+ * is the family; tapping a face opens that person's page.
  */
 
-import { useEffect, useMemo, useRef, useState } from 'react'
-import { AnimatePresence, motion } from 'framer-motion'
-import type { CalendarEvent, ID, ScheduleBlock } from '@shared/types.ts'
-import { eventCoversDate, formatTime, minutesOfDayInTimezone } from '@shared/date.ts'
-import { blocksForDate, formatClockTime, minutesOfDay, progressFor, streakFor } from '@shared/schedule.ts'
+import { useMemo, useState } from 'react'
+import { motion } from 'framer-motion'
+import type { ID, ScheduleBlock } from '@shared/types.ts'
+import { eventCoversDate, minutesOfDayInTimezone } from '@shared/date.ts'
+import { blocksForDate, minutesOfDay, progressFor, streakFor } from '@shared/schedule.ts'
 import { useApp } from '../lib/store.tsx'
 import { useNow } from '../lib/hooks.ts'
 import { Avatar, CountUp, Empty, IconButton, ProgressRing, tint } from '../components/ui.tsx'
 import { Icon } from '../components/Icon.tsx'
+import { DayColumns } from '../components/DayColumns.tsx'
 import { BlockEditor } from './editors/BlockEditor.tsx'
 import { PersonEditor } from './editors/PersonEditor.tsx'
-
-type TimelineEntry =
-  | { kind: 'block'; id: string; start: number; end: number; block: ScheduleBlock }
-  | { kind: 'event'; id: string; start: number; end: number; event: CalendarEvent }
 
 export function TodayView({ onOpenPerson }: { onOpenPerson: (id: ID) => void }) {
   const { state, today, calendar, dispatch } = useApp()
@@ -36,46 +33,34 @@ export function TodayView({ onOpenPerson }: { onOpenPerson: (id: ID) => void }) 
 
   const blocks = useMemo(() => blocksForDate(state.core, today), [state.core, today])
 
-  const { timed, allDay } = useMemo(() => {
-    const events = (calendar?.events ?? []).filter((event) => eventCoversDate(event, today, timezone))
-    return {
-      timed: events.filter((event) => !event.allDay),
-      allDay: events.filter((event) => event.allDay),
-    }
-  }, [calendar, today, timezone])
+  const events = useMemo(
+    () => (calendar?.events ?? []).filter((event) => eventCoversDate(event, today, timezone)),
+    [calendar, today, timezone],
+  )
 
-  const entries = useMemo<TimelineEntry[]>(() => {
-    const list: TimelineEntry[] = [
+  /** Headline: what is on right now, or what is next. */
+  const headline = useMemo(() => {
+    const rows = [
       ...blocks.map((block) => ({
-        kind: 'block' as const,
-        id: block.id,
         start: minutesOfDay(block.startTime),
         end: minutesOfDay(block.endTime),
-        block,
+        title: block.title,
       })),
-      ...timed.map((event) => ({
-        kind: 'event' as const,
-        id: event.id,
-        start: minutesOfDayInTimezone(event.start, timezone),
-        end: minutesOfDayInTimezone(event.end, timezone),
-        event,
-      })),
-    ]
-    return list.sort((a, b) => a.start - b.start || a.end - b.end)
-  }, [blocks, timed, timezone])
+      ...events
+        .filter((event) => !event.allDay)
+        .map((event) => ({
+          start: minutesOfDayInTimezone(event.start, timezone),
+          end: minutesOfDayInTimezone(event.end, timezone),
+          title: event.title,
+        })),
+    ].sort((a, b) => a.start - b.start)
 
-  // Slide the timeline to whatever is happening right now, once, on arrival.
-  const scroller = useRef<HTMLDivElement>(null)
-  const scrolledOnce = useRef(false)
-
-  useEffect(() => {
-    if (scrolledOnce.current || entries.length === 0) return
-    const node = scroller.current?.querySelector<HTMLElement>('[data-current="true"]')
-    if (node) {
-      node.scrollIntoView({ block: 'center', behavior: 'smooth' })
-      scrolledOnce.current = true
-    }
-  }, [entries.length])
+    if (rows.length === 0) return 'An open day'
+    const current = rows.find((row) => nowMinutes >= row.start && nowMinutes < row.end)
+    if (current) return current.title
+    const next = rows.find((row) => row.start > nowMinutes)
+    return next ? `Next: ${next.title}` : 'All done for today'
+  }, [blocks, events, timezone, nowMinutes])
 
   const people = state.core.people.filter((person) => !person.archived).sort((a, b) => a.sort - b.sort)
 
@@ -85,9 +70,7 @@ export function TodayView({ onOpenPerson }: { onOpenPerson: (id: ID) => void }) 
         <div className="section-head">
           <div>
             <span className="eyebrow">Today&rsquo;s schedule</span>
-            <h1 className="h1" style={{ marginTop: 2 }}>
-              {entries.length === 0 ? 'An open day' : nowLabel(entries, nowMinutes)}
-            </h1>
+            <h1 className="h1" style={{ marginTop: 2 }}>{headline}</h1>
           </div>
           <button className="btn btn-soft btn-sm" onClick={() => setEditingBlock('new')}>
             <Icon name="plus" size={17} />
@@ -95,63 +78,13 @@ export function TodayView({ onOpenPerson }: { onOpenPerson: (id: ID) => void }) 
           </button>
         </div>
 
-        {allDay.length > 0 ? (
-          <div className="allday-strip">
-            {allDay.map((event) => (
-              <motion.div
-                key={event.id}
-                className="allday-chip"
-                style={{ '--tint': event.color } as React.CSSProperties}
-                initial={{ opacity: 0, y: -6 }}
-                animate={{ opacity: 1, y: 0 }}
-              >
-                <span className="allday-dot" />
-                <span className="truncate">{event.title}</span>
-              </motion.div>
-            ))}
-          </div>
-        ) : null}
-
-        <div className="timeline" ref={scroller}>
-          {entries.length === 0 ? (
-            <Empty
-              emoji="🗓️"
-              title="Nothing scheduled yet"
-              hint="Add the blocks that make up a normal day — lessons, meals, quiet time. You can change them any time."
-              action={
-                <button className="btn btn-accent" onClick={() => setEditingBlock('new')}>
-                  <Icon name="plus" size={18} /> Add a block
-                </button>
-              }
-            />
-          ) : (
-            <AnimatePresence initial={false}>
-              {entries.map((entry, index) => {
-                const isNow = nowMinutes >= entry.start && nowMinutes < entry.end
-                const isPast = nowMinutes >= entry.end
-                const showNowLine =
-                  !isNow &&
-                  nowMinutes < entry.start &&
-                  (index === 0 || (entries[index - 1]?.end ?? 0) <= nowMinutes)
-
-                return (
-                  <div key={entry.id}>
-                    {showNowLine ? <NowLine now={now} timezone={timezone} /> : null}
-                    <TimelineRow
-                      entry={entry}
-                      isNow={isNow}
-                      isPast={isPast}
-                      index={index}
-                      timezone={timezone}
-                      onEdit={entry.kind === 'block' ? () => setEditingBlock(entry.block) : undefined}
-                    />
-                    {isNow ? <NowLine now={now} timezone={timezone} inline /> : null}
-                  </div>
-                )
-              })}
-            </AnimatePresence>
-          )}
-        </div>
+        <DayColumns
+          date={today}
+          events={events}
+          boundHeight
+          onEditBlock={(block) => setEditingBlock(block)}
+          onAddBlock={() => setEditingBlock('new')}
+        />
       </section>
 
       <section className="today-family">
@@ -250,133 +183,6 @@ export function TodayView({ onOpenPerson }: { onOpenPerson: (id: ID) => void }) 
         onDelete={(id) => dispatch({ t: 'person.remove', id })}
       />
     </>
-  )
-}
-
-/* ------------------------------------------------------------------ */
-
-function nowLabel(entries: TimelineEntry[], nowMinutes: number): string {
-  const current = entries.find((entry) => nowMinutes >= entry.start && nowMinutes < entry.end)
-  if (current) return current.kind === 'block' ? current.block.title : current.event.title
-
-  const next = entries.find((entry) => entry.start > nowMinutes)
-  if (next) {
-    const title = next.kind === 'block' ? next.block.title : next.event.title
-    return `Next: ${title}`
-  }
-  return 'All done for today'
-}
-
-function NowLine({ now, timezone, inline = false }: { now: Date; timezone: string; inline?: boolean }) {
-  return (
-    <motion.div
-      className={`now-line${inline ? ' now-line-inline' : ''}`}
-      layout
-      initial={{ opacity: 0, scaleX: 0.9 }}
-      animate={{ opacity: 1, scaleX: 1 }}
-      transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-    >
-      <span className="now-time numeral">{formatTime(now, timezone)}</span>
-      <span className="now-rule" />
-    </motion.div>
-  )
-}
-
-function TimelineRow({
-  entry,
-  isNow,
-  isPast,
-  index,
-  timezone,
-  onEdit,
-}: {
-  entry: TimelineEntry
-  isNow: boolean
-  isPast: boolean
-  index: number
-  timezone: string
-  onEdit?: () => void
-}) {
-  const { state } = useApp()
-
-  const color = entry.kind === 'block' ? entry.block.color : entry.event.color
-  const title = entry.kind === 'block' ? entry.block.title : entry.event.title
-  const emoji = entry.kind === 'block' ? entry.block.emoji : ''
-  const startLabel =
-    entry.kind === 'block' ? formatClockTime(entry.block.startTime) : formatTime(entry.event.start, timezone)
-  const endLabel =
-    entry.kind === 'block' ? formatClockTime(entry.block.endTime) : formatTime(entry.event.end, timezone)
-
-  const owners =
-    entry.kind === 'block' && entry.block.personIds.length > 0
-      ? state.core.people.filter((person) => entry.block.personIds.includes(person.id))
-      : []
-
-  return (
-    <motion.div
-      className={`tl-row${isNow ? ' tl-now' : ''}${isPast ? ' tl-past' : ''}`}
-      data-current={isNow ? 'true' : 'false'}
-      style={tint(color)}
-      layout
-      initial={{ opacity: 0, x: -14 }}
-      animate={{ opacity: 1, x: 0 }}
-      exit={{ opacity: 0, x: 14 }}
-      transition={{ delay: Math.min(index * 0.035, 0.4), duration: 0.42, ease: [0.16, 1, 0.3, 1] }}
-      onClick={onEdit}
-      role={onEdit ? 'button' : undefined}
-      tabIndex={onEdit ? 0 : undefined}
-      onKeyDown={(event) => {
-        if (onEdit && (event.key === 'Enter' || event.key === ' ')) {
-          event.preventDefault()
-          onEdit()
-        }
-      }}
-    >
-      <div className="tl-time">
-        <span className="tl-start numeral">{startLabel}</span>
-        <span className="tl-end numeral">{endLabel}</span>
-      </div>
-
-      <div className="tl-rail">
-        <motion.span
-          className="tl-dot"
-          animate={isNow ? { scale: [1, 1.35, 1] } : { scale: 1 }}
-          transition={isNow ? { duration: 2.2, repeat: Infinity, ease: 'easeInOut' } : {}}
-        />
-      </div>
-
-      <div className="tl-card">
-        <div className="row" style={{ gap: 10, minWidth: 0 }}>
-          {emoji ? <span className="tl-emoji">{emoji}</span> : <Icon name="calendar" size={18} />}
-          <span className="tl-title truncate">{title}</span>
-          {isNow ? <span className="tl-badge">NOW</span> : null}
-        </div>
-
-        {(owners.length > 0 || entry.kind === 'event') && (
-          <div className="tl-meta">
-            {owners.length > 0 ? (
-              <span className="row" style={{ gap: 5 }}>
-                {owners.map((person) => (
-                  <Avatar key={person.id} person={person} size={22} />
-                ))}
-              </span>
-            ) : null}
-            {entry.kind === 'event' ? (
-              <span className="tiny truncate">
-                {entry.event.location ? `${entry.event.location} · ` : ''}
-                {entry.event.sourceName}
-              </span>
-            ) : null}
-          </div>
-        )}
-      </div>
-
-      {onEdit ? (
-        <span className="tl-edit">
-          <Icon name="edit" size={16} />
-        </span>
-      ) : null}
-    </motion.div>
   )
 }
 

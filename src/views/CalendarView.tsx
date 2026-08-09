@@ -1,8 +1,8 @@
-/** Month grid, week strip and agenda over the merged calendar + schedule. */
+/** Day, week and month over the household schedule and connected calendars. */
 
 import { useMemo, useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import type { CalendarEvent, LocalEvent } from '@shared/types.ts'
+import { motion } from 'framer-motion'
+import type { CalendarEvent, LocalEvent, ScheduleBlock } from '@shared/types.ts'
 import { newId } from '@shared/id.ts'
 import {
   DAY_LETTER,
@@ -17,14 +17,15 @@ import {
   parseISODate,
   weekDates,
 } from '@shared/date.ts'
-import { blocksForDate, formatClockTime } from '@shared/schedule.ts'
 import { useApp } from '../lib/store.tsx'
-import { Avatar, Empty, Field, Segmented, tint } from '../components/ui.tsx'
+import { Field, Segmented } from '../components/ui.tsx'
 import { Icon } from '../components/Icon.tsx'
 import { Sheet, ConfirmDialog } from '../components/Sheet.tsx'
 import { ColorPicker, DangerRow, PersonPicker } from './editors/parts.tsx'
+import { DayColumns } from '../components/DayColumns.tsx'
+import { BlockEditor } from './editors/BlockEditor.tsx'
 
-type Mode = 'month' | 'week' | 'agenda'
+type Mode = 'day' | 'week' | 'month'
 
 /** Expands stored local events into concrete dates for the visible window. */
 function expandLocalEvents(events: LocalEvent[], from: string, to: string): CalendarEvent[] {
@@ -78,73 +79,76 @@ function expandLocalEvents(events: LocalEvent[], from: string, to: string): Cale
 
 export function CalendarView() {
   const { state, today, calendar, calendarError, reloadCalendar, dispatch } = useApp()
-  const [mode, setMode] = useState<Mode>('month')
+  const [mode, setMode] = useState<Mode>('day')
   const [cursor, setCursor] = useState(today)
-  const [selected, setSelected] = useState(today)
-  const [editing, setEditing] = useState<LocalEvent | 'new' | null>(null)
+  const [editingEvent, setEditingEvent] = useState<LocalEvent | 'new' | null>(null)
+  const [editingBlock, setEditingBlock] = useState<ScheduleBlock | 'new' | null>(null)
 
   const { weekStartsOn, timezone } = state.core.settings
 
-  const windowStart = mode === 'month' ? `${monthKeyOf(cursor)}-01` : cursor
-  const windowEnd = mode === 'agenda' ? addDays(cursor, 45) : addDays(windowStart, 45)
+  // A window wide enough for whichever view is showing.
+  const windowStart = addDays(mode === 'month' ? `${monthKeyOf(cursor)}-01` : cursor, -40)
+  const windowEnd = addDays(mode === 'month' ? `${monthKeyOf(cursor)}-01` : cursor, 60)
 
-  const allEvents = useMemo(() => {
-    const local = expandLocalEvents(state.core.events, addDays(windowStart, -40), windowEnd)
-    return [...(calendar?.events ?? []), ...local]
-  }, [calendar, state.core.events, windowStart, windowEnd])
+  const allEvents = useMemo(
+    () => [...(calendar?.events ?? []), ...expandLocalEvents(state.core.events, windowStart, windowEnd)],
+    [calendar, state.core.events, windowStart, windowEnd],
+  )
 
   const eventsOn = (date: string) => allEvents.filter((event) => eventCoversDate(event, date, timezone))
 
-  const gridDates = useMemo(() => monthGridDates(cursor, weekStartsOn), [cursor, weekStartsOn])
-  const weekRow = useMemo(() => weekDates(cursor, weekStartsOn), [cursor, weekStartsOn])
+  /** A tapped event opens its editor only if we own it. */
+  const openEvent = (event: CalendarEvent) => {
+    const local = state.core.events.find((entry) => event.id.startsWith(`${entry.id}:`))
+    if (local) setEditingEvent(local)
+  }
 
-  const agendaDays = useMemo(() => {
-    const days: string[] = []
-    for (let i = 0; i < 30; i++) {
-      const date = addDays(today, i)
-      if (eventsOn(date).length > 0 || blocksForDate(state.core, date).length > 0) days.push(date)
-    }
-    return days
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [allEvents, today, state.core])
+  const gridDates = useMemo(() => monthGridDates(cursor, weekStartsOn), [cursor, weekStartsOn])
+  const strip = useMemo(() => weekDates(cursor, weekStartsOn), [cursor, weekStartsOn])
+
+  const step = (direction: -1 | 1) => {
+    if (mode === 'month') setCursor(addMonths(cursor, direction))
+    else if (mode === 'week') setCursor(addDays(cursor, direction * 7))
+    else setCursor(addDays(cursor, direction))
+  }
 
   return (
     <>
       <div className="section-head">
-        <div>
+        <div style={{ minWidth: 0 }}>
           <span className="eyebrow">Calendar</span>
-          <h1 className="h1">
-            {MONTH_NAMES[parseISODate(cursor).getMonth()]} {parseISODate(cursor).getFullYear()}
+          <h1 className="h1 truncate">
+            {mode === 'day'
+              ? formatDayLabel(cursor, today)
+              : `${MONTH_NAMES[parseISODate(cursor).getMonth()]} ${parseISODate(cursor).getFullYear()}`}
           </h1>
         </div>
         <div className="row" style={{ gap: 4 }}>
-          <button className="icon-btn" onClick={() => setCursor(addMonths(cursor, -1))} aria-label="Previous month">
+          <button className="icon-btn" onClick={() => step(-1)} aria-label="Previous">
             <Icon name="chevronLeft" size={20} />
           </button>
-          <button className="btn btn-soft btn-sm" onClick={() => { setCursor(today); setSelected(today) }}>
-            Today
-          </button>
-          <button className="icon-btn" onClick={() => setCursor(addMonths(cursor, 1))} aria-label="Next month">
+          <button className="btn btn-soft btn-sm" onClick={() => setCursor(today)}>Today</button>
+          <button className="icon-btn" onClick={() => step(1)} aria-label="Next">
             <Icon name="chevronRight" size={20} />
           </button>
         </div>
       </div>
 
-      <div className="row-between" style={{ marginBottom: 16 }}>
+      <div className="row-between wrap" style={{ marginBottom: 16, gap: 10 }}>
         <Segmented
           value={mode}
           onChange={setMode}
           options={[
-            { value: 'month', label: 'Month' },
+            { value: 'day', label: 'Day' },
             { value: 'week', label: 'Week' },
-            { value: 'agenda', label: 'Agenda' },
+            { value: 'month', label: 'Month' },
           ]}
         />
         <div className="row" style={{ gap: 4 }}>
           <button className="icon-btn" onClick={() => void reloadCalendar(true)} aria-label="Refresh calendars">
             <Icon name="refresh" size={19} />
           </button>
-          <button className="btn btn-accent btn-sm" onClick={() => setEditing('new')}>
+          <button className="btn btn-accent btn-sm" onClick={() => setEditingEvent('new')}>
             <Icon name="plus" size={17} /> Event
           </button>
         </div>
@@ -163,6 +167,62 @@ export function CalendarView() {
         </div>
       ))}
 
+      {/* A week of dates, always present so moving day to day is one tap. */}
+      {mode !== 'month' ? (
+        <div className="week-strip" style={{ marginBottom: 16 }}>
+          {strip.map((date) => {
+            const count = eventsOn(date).length
+            return (
+              <motion.button
+                key={date}
+                className={`week-cell${date === cursor ? ' selected' : ''}${date === today ? ' today' : ''}`}
+                onClick={() => {
+                  setCursor(date)
+                  setMode('day')
+                }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <span className="tiny">{DAY_LETTER[parseISODate(date).getDay()]}</span>
+                <span className="week-num numeral">{parseISODate(date).getDate()}</span>
+                <span className="cal-dots">
+                  {eventsOn(date).slice(0, 3).map((event) => (
+                    <span key={event.id} className="cal-dot" style={{ background: event.color }} />
+                  ))}
+                  {count === 0 ? <span className="cal-dot" style={{ opacity: 0 }} /> : null}
+                </span>
+              </motion.button>
+            )
+          })}
+        </div>
+      ) : null}
+
+      {mode === 'day' ? (
+        <DayColumns
+          date={cursor}
+          events={eventsOn(cursor)}
+          onEditBlock={(block) => setEditingBlock(block)}
+          onEditEvent={openEvent}
+          onAddBlock={() => setEditingBlock('new')}
+          onAddEvent={() => setEditingEvent('new')}
+        />
+      ) : null}
+
+      {mode === 'week' ? (
+        <div className="stack">
+          {strip.map((date) => (
+            <div key={date}>
+              <div className="eyebrow" style={{ margin: '4px 0 8px 2px' }}>{formatDayLabel(date, today)}</div>
+              <DayColumns
+                date={date}
+                events={eventsOn(date)}
+                onEditBlock={(block) => setEditingBlock(block)}
+                onEditEvent={openEvent}
+              />
+            </div>
+          ))}
+        </div>
+      ) : null}
+
       {mode === 'month' ? (
         <>
           <div className="cal-head">
@@ -170,7 +230,7 @@ export function CalendarView() {
               <span key={index}>{DAY_LETTER[(index + weekStartsOn) % 7]}</span>
             ))}
           </div>
-          <motion.div className="cal-grid" layout>
+          <div className="cal-grid">
             {gridDates.map((date) => {
               const inMonth = monthKeyOf(date) === monthKeyOf(cursor)
               const dayEvents = eventsOn(date)
@@ -179,192 +239,52 @@ export function CalendarView() {
               return (
                 <motion.button
                   key={date}
-                  className={`cal-cell${inMonth ? '' : ' muted'}${date === selected ? ' selected' : ''}${isToday ? ' today' : ''}`}
-                  onClick={() => setSelected(date)}
-                  whileTap={{ scale: 0.94 }}
+                  className={`cal-cell${inMonth ? '' : ' muted'}${isToday ? ' today' : ''}`}
+                  onClick={() => {
+                    setCursor(date)
+                    setMode('day')
+                  }}
+                  whileTap={{ scale: 0.97 }}
                   transition={{ type: 'spring', stiffness: 500, damping: 30 }}
                 >
                   <span className="cal-num numeral">{parseISODate(date).getDate()}</span>
-                  <span className="cal-dots">
-                    {dayEvents.slice(0, 4).map((event) => (
-                      <span key={event.id} className="cal-dot" style={{ background: event.color }} />
-                    ))}
-                  </span>
-                </motion.button>
-              )
-            })}
-          </motion.div>
-
-          <DayDetail
-            date={selected}
-            today={today}
-            events={eventsOn(selected)}
-            onEditEvent={(event) => {
-              const local = state.core.events.find((entry) => event.id.startsWith(`${entry.id}:`))
-              if (local) setEditing(local)
-            }}
-          />
-        </>
-      ) : null}
-
-      {mode === 'week' ? (
-        <>
-          <div className="week-strip">
-            {weekRow.map((date) => {
-              const dayEvents = eventsOn(date)
-              return (
-                <motion.button
-                  key={date}
-                  className={`week-cell${date === selected ? ' selected' : ''}${date === today ? ' today' : ''}`}
-                  onClick={() => setSelected(date)}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  <span className="tiny">{DAY_LETTER[parseISODate(date).getDay()]}</span>
-                  <span className="week-num numeral">{parseISODate(date).getDate()}</span>
-                  <span className="cal-dots">
+                  {/* Titles, not dots — a dot tells you nothing you can act on. */}
+                  <span className="cal-chips">
                     {dayEvents.slice(0, 3).map((event) => (
-                      <span key={event.id} className="cal-dot" style={{ background: event.color }} />
+                      <span
+                        key={event.id}
+                        className="cal-chip truncate"
+                        style={{ '--tint': event.color } as React.CSSProperties}
+                      >
+                        {event.allDay ? '' : `${formatTime(event.start, timezone).replace(/:00/, '')} `}
+                        {event.title}
+                      </span>
                     ))}
+                    {dayEvents.length > 3 ? (
+                      <span className="cal-more">+{dayEvents.length - 3} more</span>
+                    ) : null}
                   </span>
                 </motion.button>
               )
             })}
           </div>
-          <DayDetail
-            date={selected}
-            today={today}
-            events={eventsOn(selected)}
-            onEditEvent={(event) => {
-              const local = state.core.events.find((entry) => event.id.startsWith(`${entry.id}:`))
-              if (local) setEditing(local)
-            }}
-          />
         </>
-      ) : null}
-
-      {mode === 'agenda' ? (
-        agendaDays.length === 0 ? (
-          <Empty emoji="🌤️" title="Nothing coming up" hint="Add an event, or connect a calendar in Settings." />
-        ) : (
-          <div className="stack">
-            {agendaDays.map((date, index) => (
-              <motion.div
-                key={date}
-                initial={{ opacity: 0, y: 14 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: Math.min(index * 0.04, 0.5), duration: 0.42, ease: [0.16, 1, 0.3, 1] }}
-              >
-                <div className="eyebrow" style={{ margin: '4px 0 8px 2px' }}>{formatDayLabel(date, today)}</div>
-                <DayDetail date={date} today={today} events={eventsOn(date)} compact />
-              </motion.div>
-            ))}
-          </div>
-        )
       ) : null}
 
       <EventEditor
-        event={editing}
-        onClose={() => setEditing(null)}
+        event={editingEvent}
+        onClose={() => setEditingEvent(null)}
         onSave={(event) => dispatch({ t: 'event.upsert', event })}
         onDelete={(id) => dispatch({ t: 'event.remove', id })}
-        defaultDate={selected}
+        defaultDate={cursor}
+      />
+      <BlockEditor
+        block={editingBlock}
+        onClose={() => setEditingBlock(null)}
+        onSave={(block) => dispatch({ t: 'block.upsert', block })}
+        onDelete={(id) => dispatch({ t: 'block.remove', id })}
       />
     </>
-  )
-}
-
-/* ------------------------------------------------------------------ */
-
-function DayDetail({
-  date,
-  today,
-  events,
-  compact = false,
-  onEditEvent,
-}: {
-  date: string
-  today: string
-  events: CalendarEvent[]
-  compact?: boolean
-  onEditEvent?: (event: CalendarEvent) => void
-}) {
-  const { state } = useApp()
-  const { timezone } = state.core.settings
-  const blocks = blocksForDate(state.core, date)
-
-  const rows = [
-    ...blocks.map((block) => ({
-      key: block.id,
-      time: formatClockTime(block.startTime),
-      title: block.title,
-      emoji: block.emoji,
-      color: block.color,
-      meta: 'Schedule',
-      personIds: block.personIds,
-      event: null as CalendarEvent | null,
-    })),
-    ...events.map((event) => ({
-      key: event.id,
-      time: event.allDay ? 'All day' : formatTime(event.start, timezone),
-      title: event.title,
-      emoji: '',
-      color: event.color,
-      meta: event.location || event.sourceName,
-      personIds: event.personIds,
-      event,
-    })),
-  ]
-
-  if (rows.length === 0) {
-    return compact ? null : (
-      <div className="card" style={{ marginTop: 18 }}>
-        <div className="small" style={{ textAlign: 'center' }}>Nothing on {formatDayLabel(date, today)}</div>
-      </div>
-    )
-  }
-
-  return (
-    <div className={compact ? 'card' : 'card'} style={{ marginTop: compact ? 0 : 18, padding: 8 }}>
-      {!compact ? (
-        <div className="eyebrow" style={{ padding: '6px 10px 10px' }}>{formatDayLabel(date, today)}</div>
-      ) : null}
-      <AnimatePresence initial={false}>
-        {rows.map((row) => {
-          const owners = state.core.people.filter((person) => row.personIds.includes(person.id))
-          return (
-            <motion.div
-              key={row.key}
-              className="day-event"
-              style={tint(row.color)}
-              layout
-              initial={{ opacity: 0, x: -8 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.3 }}
-              onClick={() => row.event && onEditEvent?.(row.event)}
-              role={row.event && onEditEvent ? 'button' : undefined}
-            >
-              <span className="day-event-rail" />
-              <span className="day-event-time numeral">{row.time}</span>
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <div className="truncate" style={{ fontWeight: 600 }}>
-                  {row.emoji ? `${row.emoji} ` : ''}
-                  {row.title}
-                </div>
-                {row.meta ? <div className="tiny truncate">{row.meta}</div> : null}
-              </div>
-              {owners.length > 0 ? (
-                <span className="row" style={{ gap: 4 }}>
-                  {owners.slice(0, 3).map((person) => (
-                    <Avatar key={person.id} person={person} size={22} />
-                  ))}
-                </span>
-              ) : null}
-            </motion.div>
-          )
-        })}
-      </AnimatePresence>
-    </div>
   )
 }
 

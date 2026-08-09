@@ -146,6 +146,13 @@ img {
   scrollbar-width: none;
 }
 
+/* The display is a portrait iPad, but the same URL gets opened on a laptop.
+   Cap the measure so a 1900px window doesn't stretch every row edge to edge. */
+.page > * {
+  max-width: 1180px;
+  margin-inline: auto;
+}
+
 .page::-webkit-scrollbar {
   display: none;
 }

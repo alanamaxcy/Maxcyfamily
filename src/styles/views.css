@@ -42,20 +42,6 @@
   min-height: 0;
 }
 
-/* On a tall portrait screen the two halves each get their own space, so the
-   family row is always visible without scrolling past the whole day. */
-@media (min-height: 900px) {
-  .today-schedule .timeline {
-    max-height: 46vh;
-    overflow-y: auto;
-    scrollbar-width: none;
-    margin-inline: calc(var(--sp-2) * -1);
-    padding-inline: var(--sp-2);
-  }
-  .today-schedule .timeline::-webkit-scrollbar {
-    display: none;
-  }
-}
 
 .allday-strip {
   display: flex;
@@ -1222,17 +1208,46 @@
   gap: 5px;
 }
 
+/* Height comes from content, not aspect-ratio — a square cell on a wide screen
+   became a 270px box holding one dot. */
 .cal-cell {
-  aspect-ratio: 1;
+  min-height: 104px;
   border-radius: var(--r-md);
   background: var(--surface);
   box-shadow: var(--shadow-sm);
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 5px;
+  align-items: stretch;
+  gap: 4px;
+  padding: 7px 6px;
+  text-align: left;
+  overflow: hidden;
   transition: box-shadow var(--t-mid) var(--ease-out), background var(--t-mid) var(--ease-out);
+}
+
+.cal-chips {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.cal-chip {
+  font-size: 10.5px;
+  font-weight: 600;
+  line-height: 1.35;
+  padding: 2px 5px;
+  border-radius: 5px;
+  background: color-mix(in srgb, var(--tint) 16%, transparent);
+  color: color-mix(in srgb, var(--tint) 72%, var(--ink));
+  border-left: 2px solid var(--tint);
+}
+
+.cal-more {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--ink-4);
+  padding-left: 5px;
 }
 
 .cal-cell.muted {
@@ -1245,19 +1260,18 @@
   background: var(--coral);
   color: #fff;
   border-radius: var(--r-full);
-  width: 30px;
-  height: 30px;
+  width: 24px;
+  height: 24px;
   display: grid;
   place-items: center;
 }
 
-.cal-cell.selected {
-  box-shadow: var(--shadow-md), inset 0 0 0 2px var(--ink);
-}
-
 .cal-num {
-  font-size: 15px;
+  font-size: 13.5px;
   font-weight: 700;
+  color: var(--ink-3);
+  align-self: flex-start;
+  flex: none;
 }
 
 .cal-dots {
@@ -2222,4 +2236,244 @@
 
 .agenda-row.past {
   opacity: 0.45;
+}
+
+/* ================================================================== */
+/* Two-column day: Schedule | Events                                   */
+/* ================================================================== */
+
+.day-cols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--sp-4);
+  align-items: start;
+}
+
+.day-col {
+  background: var(--surface);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.day-col-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 13px 14px 11px;
+  border-bottom: 1px solid var(--line);
+  flex: none;
+}
+
+.day-col-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 11.5px;
+  font-weight: 800;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.day-col-count {
+  margin-left: auto;
+  font-size: 12.5px;
+  font-weight: 800;
+  color: var(--ink-4);
+}
+
+.day-col-add {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--r-full);
+  background: var(--surface-2);
+  color: var(--ink-2);
+  display: grid;
+  place-items: center;
+  flex: none;
+  transition: background var(--t-fast) var(--ease-out);
+}
+
+.day-col-add:hover {
+  background: var(--surface-3);
+}
+
+.day-col-body {
+  padding: 6px;
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+
+.day-col-body::-webkit-scrollbar {
+  display: none;
+}
+
+/* On a tall screen each column gets a fixed slice so the family row below
+   stays visible without scrolling past the whole day. */
+.day-cols.bound .day-col-body {
+  max-height: 40vh;
+}
+
+.day-col-empty {
+  padding: 26px 12px;
+  text-align: center;
+  font-size: 13.5px;
+  color: var(--ink-4);
+}
+
+.day-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 8px;
+  border-radius: var(--r-sm);
+  text-align: left;
+  transition: background var(--t-fast) var(--ease-out), opacity var(--t-mid) var(--ease-out);
+}
+
+.day-item + .day-item {
+  border-top: 1px solid var(--line);
+}
+
+.day-item:not(:disabled):hover {
+  background: var(--surface-2);
+}
+
+.day-item-rail {
+  width: 4px;
+  align-self: stretch;
+  min-height: 26px;
+  border-radius: 4px;
+  background: var(--tint);
+  flex: none;
+}
+
+.day-item-time {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ink-3);
+  width: 62px;
+  flex: none;
+  white-space: nowrap;
+}
+
+.day-item-emoji {
+  font-size: 18px;
+  line-height: 1;
+  flex: none;
+}
+
+.day-item-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.day-item-title {
+  flex: 1;
+  min-width: 0;
+  font-size: 14.5px;
+  font-weight: 600;
+  letter-spacing: -0.012em;
+}
+
+.day-item-body .day-item-title {
+  flex: none;
+}
+
+.day-item-source {
+  font-size: 11.5px;
+  color: var(--ink-4);
+}
+
+.day-item.now {
+  background: color-mix(in srgb, var(--tint) 12%, transparent);
+}
+
+.day-item.now .day-item-title {
+  font-weight: 700;
+}
+
+.day-item.past {
+  opacity: 0.42;
+}
+
+.day-item.allday {
+  background: color-mix(in srgb, var(--tint) 10%, transparent);
+}
+
+/* The "now" line inside a column. */
+.now-rule-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 8px;
+}
+
+.now-rule-label {
+  font-size: 10.5px;
+  font-weight: 800;
+  color: var(--coral);
+  white-space: nowrap;
+}
+
+.now-rule-line {
+  flex: 1;
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--coral), transparent);
+}
+
+/* Per-calendar show/hide, only rendered when more than one feed is present. */
+.feed-filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 10px 12px 4px;
+  flex: none;
+}
+
+.feed-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 28px;
+  padding: 0 11px;
+  border-radius: var(--r-full);
+  background: var(--surface-2);
+  color: var(--ink-4);
+  font-size: 12px;
+  font-weight: 700;
+  opacity: 0.55;
+  transition: opacity var(--t-fast) var(--ease-out), background var(--t-fast) var(--ease-out);
+}
+
+.feed-chip.on {
+  opacity: 1;
+  background: color-mix(in srgb, var(--tint) 14%, transparent);
+  color: var(--ink-2);
+}
+
+.feed-chip-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--r-full);
+  background: var(--tint);
+  flex: none;
+}
+
+@media (max-width: 720px) {
+  .day-cols {
+    grid-template-columns: 1fr;
+  }
+  .day-cols.bound .day-col-body {
+    max-height: none;
+  }
 }
