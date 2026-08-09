@@ -70,9 +70,20 @@ the gear, top right.
 
 ### A kid's page
 
-Tapping a face opens their page: today's schedule, their routines as big
-tick-boxes, their jobs, their points and streak, and the rewards they can
-afford.
+Routines are the point of this screen. Each one is a full card stating its
+bonus up front — "Finish all 5 to earn 10 points" — with a progress bar and
+big tappable steps. Individual steps pay nothing; completing the *whole*
+routine is what earns, so a morning routine is worth its own amount and an
+evening routine is worth its own. Both are set per routine on the Routines
+tab.
+
+Underneath, **Extra jobs** are à la carte: each tile shows the points it is
+worth and can be tapped any time for those points, independently of any
+routine. Below that are the rewards they can afford, and their day.
+
+A routine with nobody assigned belongs to every kid, so the seeded Morning and
+Bedtime routines work the moment you add people. Name someone explicitly — a
+grown-up included — and it becomes theirs alone.
 
 ### Ticking something off
 

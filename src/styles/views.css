@@ -442,68 +442,226 @@
   font-size: 24px;
 }
 
-/* --- Task rows ---------------------------------------------------- */
+/* --- Routine cards: the focus of a kid's page --------------------- */
 
-.task-list {
+.routine-card {
   background: var(--surface);
-  border-radius: var(--r-lg);
+  border-radius: var(--r-xl);
   box-shadow: var(--shadow-md);
-  padding: 8px;
+  padding: var(--sp-5) var(--sp-5) var(--sp-3);
+  margin-bottom: var(--sp-5);
+  overflow: hidden;
+  position: relative;
+  transition: box-shadow var(--t-mid) var(--ease-out);
 }
 
-.task-row {
+/* A finished routine gets a green edge so it reads as banked from across the room. */
+.routine-card.complete {
+  box-shadow: var(--shadow-md), inset 0 0 0 2px var(--forest);
+}
+
+.routine-head {
   display: flex;
   align-items: center;
-  gap: 14px;
-  padding: 12px 12px;
-  border-radius: var(--r-md);
-  transition: background var(--t-fast) var(--ease-out);
+  gap: var(--sp-4);
+  margin-bottom: var(--sp-4);
 }
 
-.task-row + .task-row {
-  border-top: 1px solid var(--line);
-}
-
-.task-emoji {
-  font-size: 24px;
+.routine-emoji {
+  font-size: 44px;
   line-height: 1;
   flex: none;
 }
 
-.task-title {
+.routine-name {
+  font-size: 26px;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+}
+
+.routine-bonus {
+  font-size: 14.5px;
+  color: var(--ink-3);
+  margin-top: 3px;
+}
+
+.routine-bonus strong {
+  color: var(--amber-deep);
+  font-weight: 800;
+}
+
+.routine-bonus.earned {
+  color: var(--forest);
+  font-weight: 700;
+}
+
+.routine-count {
+  display: flex;
+  align-items: baseline;
+  flex: none;
+  letter-spacing: -0.04em;
+}
+
+.routine-count-done {
+  font-size: 32px;
+  font-weight: 800;
+  color: var(--tint);
+}
+
+.routine-count-total {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--ink-4);
+}
+
+.routine-bar {
+  height: 8px;
+  border-radius: var(--r-full);
+  background: var(--surface-3);
+  overflow: hidden;
+  margin-bottom: var(--sp-2);
+}
+
+.routine-bar-fill {
+  display: block;
+  height: 100%;
+  border-radius: var(--r-full);
+  background: linear-gradient(90deg, var(--tint), color-mix(in srgb, var(--tint) 55%, var(--amber)));
+}
+
+.routine-card.complete .routine-bar-fill {
+  background: var(--forest);
+}
+
+.routine-steps {
+  display: flex;
+  flex-direction: column;
+}
+
+.step-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 2px;
+}
+
+.step-item + .step-item {
+  border-top: 1px solid var(--line);
+}
+
+.step-emoji {
+  font-size: 26px;
+  line-height: 1;
+  flex: none;
+  transition: opacity var(--t-mid) var(--ease-out);
+}
+
+.step-title {
   flex: 1;
   min-width: 0;
-  font-size: 17px;
+  font-size: 18px;
   font-weight: 600;
   letter-spacing: -0.015em;
   transition: color var(--t-mid) var(--ease-out);
 }
 
-.task-row.done .task-title {
+.step-mins {
+  font-size: 12.5px;
+  color: var(--ink-4);
+  flex: none;
+}
+
+.step-item.done .step-title {
   color: var(--ink-4);
   text-decoration: line-through;
   text-decoration-color: var(--ink-4);
 }
 
-.task-row.done .task-emoji {
-  opacity: 0.45;
+.step-item.done .step-emoji {
+  opacity: 0.4;
 }
 
-.task-meta {
-  font-size: 12.5px;
-  color: var(--ink-4);
+/* --- Jobs: a la carte extras ------------------------------------- */
+
+.jobs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(136px, 1fr));
+  gap: 12px;
 }
 
-.task-points {
+.job-card {
+  position: relative;
+  padding: 18px 12px 14px;
+  border-radius: var(--r-lg);
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  text-align: center;
+  min-height: 138px;
+  transition: box-shadow var(--t-mid) var(--ease-out), background var(--t-mid) var(--ease-out),
+    opacity var(--t-mid) var(--ease-out);
+}
+
+.job-card.done {
+  background: var(--forest-soft);
+  box-shadow: none;
+}
+
+.job-emoji {
+  font-size: 34px;
+  line-height: 1;
+  transition: opacity var(--t-mid) var(--ease-out);
+}
+
+.job-card.done .job-emoji {
+  opacity: 0.5;
+}
+
+.job-title {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--ink);
+}
+
+.job-card.done .job-title {
+  color: var(--ink-3);
+  text-decoration: line-through;
+}
+
+.job-points {
+  margin-top: auto;
   display: inline-flex;
   align-items: center;
-  gap: 3px;
+  gap: 4px;
   font-size: 13px;
-  font-weight: 700;
+  font-weight: 800;
   color: var(--amber-deep);
   background: var(--amber-soft);
-  padding: 4px 9px;
+  padding: 4px 11px;
   border-radius: var(--r-full);
+}
+
+.job-card.done .job-points {
+  color: var(--forest);
+  background: transparent;
+}
+
+.job-tick {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 26px;
+  height: 26px;
+  border-radius: var(--r-full);
+  background: var(--forest);
+  color: #fff;
+  display: grid;
+  place-items: center;
 }
 
 /* --- Reward rail -------------------------------------------------- */

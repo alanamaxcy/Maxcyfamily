@@ -350,7 +350,7 @@ function RoutineEditor({
           <Stepper value={draft.points} onChange={(points) => patch({ points })} step={5} max={500} />
         </Field>
 
-        <Field label="Who does it?">
+        <Field label="Who does it?" hint="Leave it on Everyone and every kid gets this routine.">
           <PersonPicker
             people={state.core.people.filter((person) => !person.archived)}
             selected={draft.assigneeIds}

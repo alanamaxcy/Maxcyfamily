@@ -83,11 +83,23 @@ export function familyChores(core: Core, date: ISODate): Chore[] {
   )
 }
 
+/**
+ * Routines with nobody assigned belong to every kid.
+ *
+ * Without this the seeded Morning and Bedtime routines are invisible until
+ * someone opens the editor and ticks each child by hand — which reads as
+ * "routines don't work". Grown-ups are excluded from the unassigned case: a
+ * parent who wants a routine can be named on it explicitly.
+ */
 export function routinesForPerson(core: Core, personId: ID, date: ISODate): Routine[] {
-  return core.routines.filter(
-    (routine) =>
-      !routine.archived && isAssignedTo(routine.assigneeIds, personId) && isDueOn(routine.schedule, date),
-  )
+  const person = core.people.find((entry) => entry.id === personId)
+
+  return core.routines.filter((routine) => {
+    if (routine.archived) return false
+    if (!isDueOn(routine.schedule, date)) return false
+    if (routine.assigneeIds.length === 0) return person?.role !== 'parent'
+    return routine.assigneeIds.includes(personId)
+  })
 }
 
 export interface Progress {

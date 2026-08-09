@@ -2,7 +2,14 @@ import { describe, expect, it } from 'vitest'
 import type { Chore, FullState, Person, Redemption, Routine } from '@shared/types.ts'
 import { applyOps, choreRefKey, type Op } from '@shared/ops.ts'
 import { initialState } from '@shared/seed.ts'
-import { isChoreDone, isStepDone, progressFor, routineProgress, streakFor } from '@shared/schedule.ts'
+import {
+  isChoreDone,
+  isStepDone,
+  progressFor,
+  routineProgress,
+  routinesForPerson,
+  streakFor,
+} from '@shared/schedule.ts'
 
 const TODAY = '2026-08-09' // a Sunday
 const NOW = '2026-08-09T12:00:00.000Z'
@@ -217,5 +224,43 @@ describe('ref keys', () => {
   it('are unique per chore, person and day', () => {
     expect(choreRefKey('c1', 'kid', TODAY)).toBe('chore:c1:kid:2026-08-09')
     expect(choreRefKey('c1', 'kid', '2026-08-10')).not.toBe(choreRefKey('c1', 'kid', TODAY))
+  })
+})
+
+describe('routine assignment', () => {
+  function withPeople(): FullState {
+    const state = base()
+    state.core.people = [person('kid1'), person('kid2'), person('grownup', { role: 'parent' })]
+    // The seeded routines ship with nobody assigned.
+    state.core.routines = [{ ...routine('r1', ['s1', 's2'], 10), assigneeIds: [] }]
+    return state
+  }
+
+  it('gives an unassigned routine to every kid', () => {
+    // Regression: seeded routines had no assignees, so a kid's page showed
+    // nothing to tick and routines looked broken.
+    const state = withPeople()
+    expect(routinesForPerson(state.core, 'kid1', TODAY).map((r) => r.id)).toEqual(['r1'])
+    expect(routinesForPerson(state.core, 'kid2', TODAY).map((r) => r.id)).toEqual(['r1'])
+  })
+
+  it('leaves grown-ups out of unassigned routines', () => {
+    const state = withPeople()
+    expect(routinesForPerson(state.core, 'grownup', TODAY)).toEqual([])
+  })
+
+  it('still honours an explicit assignment, including to a parent', () => {
+    const state = withPeople()
+    state.core.routines = [{ ...routine('r1', ['s1'], 5), assigneeIds: ['grownup'] }]
+
+    expect(routinesForPerson(state.core, 'grownup', TODAY).map((r) => r.id)).toEqual(['r1'])
+    expect(routinesForPerson(state.core, 'kid1', TODAY)).toEqual([])
+  })
+
+  it('counts an unassigned routine toward a kid’s daily progress', () => {
+    const state = withPeople()
+    // 2 chores assigned to 'kid' only, so kid1 gets just the 2 routine steps.
+    expect(progressFor(state, 'kid1', TODAY).total).toBe(2)
+    expect(progressFor(state, 'grownup', TODAY).total).toBe(0)
   })
 })
