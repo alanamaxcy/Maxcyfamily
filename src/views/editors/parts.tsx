@@ -11,6 +11,7 @@ import { DAY_LETTER } from '@shared/date.ts'
 import { PERSON_COLORS } from '@shared/seed.ts'
 import { Avatar, SPRING, tint } from '../../components/ui.tsx'
 import { Icon } from '../../components/Icon.tsx'
+import { Dialog } from '../../components/Sheet.tsx'
 
 export const PALETTE = [
   ...PERSON_COLORS,
@@ -103,6 +104,54 @@ export function EmojiPicker({ value, onChange }: { value: string; onChange: (emo
 
 /* ------------------------------------------------------------------ */
 
+/**
+ * A tappable emoji swatch that opens the full picker.
+ *
+ * The previous inline text input meant reaching for the emoji keyboard, which
+ * is fine on an iPad and genuinely awkward on a laptop.
+ */
+export function EmojiButton({
+  value,
+  onChange,
+  label = 'Choose an icon',
+}: {
+  value: string
+  onChange: (emoji: string) => void
+  label?: string
+}) {
+  const [open, setOpen] = useState(false)
+
+  return (
+    <>
+      <motion.button
+        type="button"
+        className="emoji-btn"
+        onClick={() => setOpen(true)}
+        whileTap={{ scale: 0.88 }}
+        transition={SPRING}
+        aria-label={label}
+        title={label}
+      >
+        {value || '🙂'}
+      </motion.button>
+
+      <Dialog open={open} onClose={() => setOpen(false)}>
+        <h3 className="h2" style={{ marginBottom: 14 }}>{label}</h3>
+        <EmojiPicker
+          value={value}
+          onChange={(emoji) => {
+            onChange(emoji)
+            setOpen(false)
+          }}
+        />
+        <button className="btn btn-soft btn-block" style={{ marginTop: 18 }} onClick={() => setOpen(false)}>
+          Done
+        </button>
+      </Dialog>
+    </>
+  )
+}
+
 export function DayPicker({ days, onChange }: { days: number[]; onChange: (days: number[]) => void }) {
   return (
     <div className="day-picker">
@@ -141,6 +190,7 @@ export function SchedulePicker({
   const options: { type: Schedule['type']; label: string }[] = [
     { type: 'daily', label: 'Every day' },
     { type: 'weekly', label: 'Certain days' },
+    { type: 'weeklyN', label: 'Every other week' },
     { type: 'everyN', label: 'Every few days' },
     { type: 'once', label: 'Just once' },
   ]
@@ -157,6 +207,9 @@ export function SchedulePicker({
               if (option.type === value.type) return
               if (option.type === 'daily') onChange({ type: 'daily' })
               if (option.type === 'weekly') onChange({ type: 'weekly', days: [1, 2, 3, 4, 5] })
+              if (option.type === 'weeklyN') {
+                onChange({ type: 'weeklyN', days: [1], everyWeeks: 2, startDate: today })
+              }
               if (option.type === 'everyN') onChange({ type: 'everyN', n: 2, startDate: today })
               if (option.type === 'once') onChange({ type: 'once', date: today })
             }}
@@ -169,6 +222,38 @@ export function SchedulePicker({
       {value.type === 'weekly' ? (
         <div style={{ marginTop: 12 }}>
           <DayPicker days={value.days} onChange={(days) => onChange({ type: 'weekly', days })} />
+        </div>
+      ) : null}
+
+      {value.type === 'weeklyN' ? (
+        <div style={{ marginTop: 12 }}>
+          <DayPicker
+            days={value.days}
+            onChange={(days) => onChange({ ...value, days })}
+          />
+          <div className="row wrap" style={{ marginTop: 12, gap: 6 }}>
+            {[2, 3, 4].map((weeks) => (
+              <button
+                key={weeks}
+                type="button"
+                className={`chip${value.everyWeeks === weeks ? ' chip-on' : ''}`}
+                onClick={() => onChange({ ...value, everyWeeks: weeks })}
+              >
+                {weeks === 2 ? 'Every other week' : `Every ${weeks} weeks`}
+              </button>
+            ))}
+          </div>
+          <label className="field" style={{ marginTop: 12 }}>
+            <span className="field-label">Starting the week of</span>
+            <input
+              type="date"
+              value={value.startDate}
+              onChange={(event) => onChange({ ...value, startDate: event.target.value })}
+            />
+            <span className="field-hint">
+              Sets which week counts as the first one, so "every other" lands on the right weeks.
+            </span>
+          </label>
         </div>
       ) : null}
 

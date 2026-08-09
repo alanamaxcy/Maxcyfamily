@@ -32,6 +32,7 @@ import { useNow } from '../lib/hooks.ts'
 import { Avatar, Check, CountUp, Empty, IconButton, ProgressRing, SPRING, tint } from '../components/ui.tsx'
 import { Icon } from '../components/Icon.tsx'
 import { Dialog } from '../components/Sheet.tsx'
+import { ParentView } from './ParentView.tsx'
 
 const TIME_ORDER: Record<Routine['timeOfDay'], number> = { morning: 0, afternoon: 1, evening: 2 }
 
@@ -70,6 +71,10 @@ export function PersonView({ personId, onBack }: { personId: ID; onBack: () => v
       />
     )
   }
+
+  // Grown-ups get a different page entirely — schedule, tasks and what's
+  // coming, with no routines, points or rewards.
+  if (person.role === 'parent') return <ParentView person={person} onBack={onBack} />
 
   const progress = progressFor(state, person.id, today)
   const streak = streakFor(state, person.id, today)

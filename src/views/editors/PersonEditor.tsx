@@ -10,7 +10,7 @@ import { Avatar, Field, SPRING } from '../../components/ui.tsx'
 import { Icon } from '../../components/Icon.tsx'
 import { useApp } from '../../lib/store.tsx'
 import { photoUrl, uploadPhoto } from '../../lib/api.ts'
-import { PROFILE_MAX_DIMENSION, prepareImage } from '../../lib/image.ts'
+import { PhotoCropper } from '../../components/PhotoCropper.tsx'
 import { ColorPicker, DangerRow, EmojiPicker } from './parts.tsx'
 
 const KID_EMOJI = ['🦊', '🐻', '🐨', '🦁', '🐯', '🐸', '🦄', '🐧', '🦖', '🐙', '🦋', '🐝', '🌟', '🚀', '🌈', '⚡️']
@@ -42,6 +42,7 @@ export function PersonEditor({
   const [draft, setDraft] = useState<Person>(() => blank(state.core.people.length))
   const [confirming, setConfirming] = useState(false)
   const [uploading, setUploading] = useState(false)
+  const [cropping, setCropping] = useState<File | null>(null)
   const fileInput = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
@@ -59,12 +60,13 @@ export function PersonEditor({
     onClose()
   }
 
-  const pickPhoto = async (file: File | undefined) => {
-    if (!file) return
+  // The cropper already outputs a 640px JPEG, so no further downscaling is
+  // needed on this path — it replaces prepareImage rather than following it.
+  const uploadCropped = async (blob: Blob, type: string) => {
+    setCropping(null)
     setUploading(true)
     try {
-      const prepared = await prepareImage(file, PROFILE_MAX_DIMENSION)
-      patch({ photoId: await uploadPhoto(prepared.blob, prepared.type) })
+      patch({ photoId: await uploadPhoto(blob, type) })
     } catch (error) {
       toast(error instanceof Error ? error.message : 'Could not upload that photo')
     } finally {
@@ -109,14 +111,20 @@ export function PersonEditor({
             accept="image/*"
             hidden
             onChange={(event) => {
-              void pickPhoto(event.target.files?.[0])
+              const picked = event.target.files?.[0]
+              if (picked) setCropping(picked)
               event.target.value = ''
             }}
           />
           {draft.photoId ? (
-            <button className="btn btn-ghost btn-sm" onClick={() => patch({ photoId: undefined })}>
-              Use an icon instead
-            </button>
+            <div className="row" style={{ gap: 8 }}>
+              <button className="btn btn-soft btn-sm" onClick={() => fileInput.current?.click()}>
+                <Icon name="camera" size={16} /> Change
+              </button>
+              <button className="btn btn-ghost btn-sm" onClick={() => patch({ photoId: undefined })}>
+                Use an icon instead
+              </button>
+            </div>
           ) : (
             <button className="btn btn-soft btn-sm" onClick={() => fileInput.current?.click()} disabled={uploading}>
               <Icon name="camera" size={16} /> {uploading ? 'Uploading…' : 'Add a photo'}
@@ -200,6 +208,12 @@ export function PersonEditor({
           </>
         ) : null}
       </Sheet>
+
+      <PhotoCropper
+        file={cropping}
+        onCancel={() => setCropping(null)}
+        onCropped={(blob, type) => void uploadCropped(blob, type)}
+      />
 
       <ConfirmDialog
         open={confirming}

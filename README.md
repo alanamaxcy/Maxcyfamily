@@ -58,9 +58,9 @@ npm run typecheck
 | --- | --- |
 | **Today** | The day's schedule on a timeline with a live "now" marker, and the family below. Tap a face to open that person's page. |
 | **Calendar** | Month, week and agenda over your subscribed calendars plus events added here. |
-| **Routines** | Build the morning/bedtime checklists and the chore list. |
+| **Routines** | Three tabs: **Schedule** (edit or delete any block of the day), **Routines** (the checklists), **Chores**. |
 | **Rewards** | Points balances, the reward catalogue, what's waiting to be handed over, and the undo log. |
-| **Meals** | The week's menu and the shopping list it feeds. |
+| **Meals** | The week's menu, repeating meals, and the shopping list it feeds. |
 | **Recipes** | The recipe vault — scaling, cup↔gram conversion, and import from a link. |
 | **To-dos** | Shared lists for the grown-ups. |
 | **Family** | Add and edit everyone. |
@@ -85,6 +85,25 @@ A routine with nobody assigned belongs to every kid, so the seeded Morning and
 Bedtime routines work the moment you add people. Name someone explicitly — a
 grown-up included — and it becomes theirs alone.
 
+### A grown-up's page
+
+Parents get a different screen entirely — no routines, no points, no rewards.
+It opens on what today looks like (their schedule blocks and calendar events on
+one list, with a live "now" marker), then their open tasks, what they are
+cooking this week, and everything on the calendar for the next fortnight.
+Tasks include anything assigned to them plus anything nobody has claimed.
+
+### Repeating meals
+
+Meals → **Repeats** sets up the ones that come round on a cycle. Schedules
+include *every other week*, so "spaghetti every other Monday" is two taps. A
+repeating meal fills its slot automatically and is badged as such; pinning a
+different meal on one day overrides it for that day only, and clearing a day
+keeps it clear rather than letting the repeat come back.
+
+The same *every other week* option is available to schedule blocks, chores and
+routines — anything that repeats on a fortnightly cycle.
+
 ### Ticking something off
 
 Three things fire from the box that was tapped:
@@ -106,9 +125,12 @@ the switch in Settings.
 
 ### Photos
 
-Profile pictures and sleep-screen photos are resized in the browser before they
-are uploaded — 640px for avatars, 2048px for the sleep screen — and re-encoded
-to JPEG. A 1.5 MB phone photo lands as roughly 11–100 KB depending on the
+Profile photos open a cropper: drag to move, pinch or use the slider to zoom,
+with a circular window matching how avatars actually render. The preview and
+the export use the same geometry, so what you frame is what gets saved.
+
+Photos are resized in the browser before upload — 640px for avatars, 2048px for
+the sleep screen — and re-encoded to JPEG. A 1.5 MB phone photo lands as roughly 11–100 KB depending on the
 subject, which keeps Blob storage small and the iPad's decode fast. Re-encoding
 also normalises HEIC, which non-Apple browsers cannot display. EXIF rotation is
 applied, so a photo taken sideways is not stored sideways. If a file cannot be

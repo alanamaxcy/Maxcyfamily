@@ -2,16 +2,17 @@
 
 import { useMemo, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import type { DayMeals, Meal, MealSlot, ShoppingItem } from '@shared/types.ts'
+import type { Meal, MealRule, MealSlot, ShoppingItem } from '@shared/types.ts'
 import { newId } from '@shared/id.ts'
 import { CATEGORY_META, CATEGORY_ORDER, guessCategory, splitQuantity } from '@shared/categorize.ts'
 import { DAY_SHORT, addDays, formatDayLabel, parseISODate, startOfWeek, weekDates } from '@shared/date.ts'
 import { ingredientNames, type Recipe } from '@shared/recipes.ts'
+import { resolveDayMeals, resolveMeal, scheduleSummary } from '@shared/schedule.ts'
 import { useApp } from '../lib/store.tsx'
 import { Avatar, Empty, Field, Segmented, SPRING, tint } from '../components/ui.tsx'
 import { Icon } from '../components/Icon.tsx'
-import { Sheet } from '../components/Sheet.tsx'
-import { EmojiPicker } from './editors/parts.tsx'
+import { Sheet, ConfirmDialog } from '../components/Sheet.tsx'
+import { DangerRow, EmojiPicker, SchedulePicker } from './editors/parts.tsx'
 
 const SLOTS: { id: MealSlot; label: string; emoji: string }[] = [
   { id: 'breakfast', label: 'Breakfast', emoji: '🍳' },
@@ -24,6 +25,8 @@ export function MealsView() {
   const [tab, setTab] = useState<'menu' | 'shopping'>('menu')
   const [weekStart, setWeekStart] = useState(() => startOfWeek(today, state.core.settings.weekStartsOn))
   const [editing, setEditing] = useState<{ date: string; slot: MealSlot } | null>(null)
+  const [managingRules, setManagingRules] = useState(false)
+  const [editingRule, setEditingRule] = useState<MealRule | 'new' | null>(null)
 
   const dates = useMemo(
     () => weekDates(weekStart, state.core.settings.weekStartsOn),
@@ -65,6 +68,9 @@ export function MealsView() {
         </div>
         {tab === 'menu' ? (
           <div className="row" style={{ gap: 4 }}>
+            <button className="btn btn-soft btn-sm" onClick={() => setManagingRules(true)}>
+              <Icon name="refresh" size={15} /> Repeats
+            </button>
             <button className="icon-btn" onClick={() => setWeekStart(addDays(weekStart, -7))} aria-label="Previous week">
               <Icon name="chevronLeft" size={20} />
             </button>
@@ -100,7 +106,7 @@ export function MealsView() {
       {tab === 'menu' ? (
         <div className="stack">
           {dates.map((date, index) => {
-            const day: DayMeals = state.core.meals[date] ?? {}
+            const resolved = resolveDayMeals(state.core, date)
             const isToday = date === today
 
             return (
@@ -123,7 +129,8 @@ export function MealsView() {
 
                 <div className="meal-slots">
                   {SLOTS.map((slot) => {
-                    const meal = day[slot.id]
+                    const entry = resolved[slot.id]
+                    const meal = entry?.meal
                     return (
                       <motion.button
                         key={slot.id}
@@ -141,6 +148,11 @@ export function MealsView() {
                               {meal.emoji ? `${meal.emoji} ` : ''}
                               {meal.title}
                             </span>
+                            {entry?.ruleId ? (
+                              <span className="meal-repeat" title="Repeats on a schedule">
+                                <Icon name="refresh" size={12} /> repeats
+                              </span>
+                            ) : null}
                             {meal.cookId ? (
                               <span className="meal-cook">
                                 {(() => {
@@ -171,6 +183,207 @@ export function MealsView() {
         target={editing}
         onClose={() => setEditing(null)}
         onAddIngredients={addToShopping}
+        onRepeat={(meal, slot) => {
+          setEditing(null)
+          setEditingRule({
+            id: newId('mr'),
+            slot,
+            meal,
+            schedule: { type: 'weeklyN', days: [parseISODate(today).getDay()], everyWeeks: 2, startDate: today },
+          })
+        }}
+      />
+
+      <Sheet
+        open={managingRules}
+        onClose={() => setManagingRules(false)}
+        title="Repeating meals"
+        subtitle="Meals that come back on their own"
+        footer={
+          <button
+            className="btn btn-primary btn-block"
+            onClick={() =>
+              setEditingRule({
+                id: newId('mr'),
+                slot: 'dinner',
+                meal: { title: '', emoji: '🍽️' },
+                schedule: { type: 'weeklyN', days: [1], everyWeeks: 2, startDate: today },
+              })
+            }
+          >
+            <Icon name="plus" size={17} /> New repeating meal
+          </button>
+        }
+      >
+        {state.core.mealRules.length === 0 ? (
+          <Empty
+            emoji="🔁"
+            title="Nothing repeats yet"
+            hint="Set up the meals that come round on a cycle — taco Tuesday, spaghetti every other Monday."
+          />
+        ) : (
+          <div className="card" style={{ padding: 6 }}>
+            {state.core.mealRules.map((rule) => (
+              <button key={rule.id} className="manage-row" onClick={() => setEditingRule(rule)}>
+                <span className="manage-emoji">{rule.meal.emoji ?? '🍽️'}</span>
+                <div style={{ flex: 1, minWidth: 0, textAlign: 'left' }}>
+                  <div className="truncate" style={{ fontWeight: 600 }}>{rule.meal.title}</div>
+                  <div className="tiny">
+                    {SLOTS.find((slot) => slot.id === rule.slot)?.label} · {scheduleSummary(rule.schedule)}
+                  </div>
+                </div>
+                <Icon name="chevronRight" size={17} />
+              </button>
+            ))}
+          </div>
+        )}
+      </Sheet>
+
+      <MealRuleEditor
+        rule={editingRule}
+        onClose={() => setEditingRule(null)}
+        onSave={(rule) => dispatch({ t: 'mealRule.upsert', rule })}
+        onDelete={(id) => dispatch({ t: 'mealRule.remove', id })}
+      />
+    </>
+  )
+}
+
+/* ------------------------------------------------------------------ */
+
+function MealRuleEditor({
+  rule,
+  onClose,
+  onSave,
+  onDelete,
+}: {
+  rule: MealRule | 'new' | null
+  onClose: () => void
+  onSave: (rule: MealRule) => void
+  onDelete: (id: string) => void
+}) {
+  const { state, today } = useApp()
+  const [draft, setDraft] = useState<MealRule | null>(null)
+  const [seeded, setSeeded] = useState<string | null>(null)
+  const [confirming, setConfirming] = useState(false)
+
+  const key = rule === 'new' ? 'new' : (rule?.id ?? '')
+  if (rule && seeded !== key) {
+    setSeeded(key)
+    setDraft(rule === 'new' ? null : structuredClone(rule))
+  }
+
+  const patchMeal = (changes: Partial<Meal>) =>
+    setDraft((current) => (current ? { ...current, meal: { ...current.meal, ...changes } } : current))
+
+  if (!draft) return null
+
+  return (
+    <>
+      <Sheet
+        open={rule !== null}
+        onClose={onClose}
+        title="Repeating meal"
+        subtitle="It fills itself in on the days you choose"
+        footer={
+          <>
+            <button className="btn btn-soft btn-block" onClick={onClose}>Cancel</button>
+            <button
+              className="btn btn-primary btn-block"
+              disabled={!draft.meal.title.trim()}
+              onClick={() => {
+                onSave({ ...draft, meal: { ...draft.meal, title: draft.meal.title.trim() } })
+                onClose()
+              }}
+            >
+              Save
+            </button>
+          </>
+        }
+      >
+        <Field label="What are we eating?">
+          <input
+            value={draft.meal.title}
+            onChange={(event) => patchMeal({ title: event.target.value })}
+            placeholder="Spaghetti"
+            autoFocus
+          />
+        </Field>
+
+        <Field label="Which meal?">
+          <div className="row" style={{ gap: 8 }}>
+            {SLOTS.map((slot) => (
+              <button
+                key={slot.id}
+                className={`chip${draft.slot === slot.id ? ' chip-on' : ''}`}
+                style={{ flex: 1, justifyContent: 'center', height: 44 }}
+                onClick={() => setDraft({ ...draft, slot: slot.id })}
+              >
+                {slot.emoji} {slot.label}
+              </button>
+            ))}
+          </div>
+        </Field>
+
+        <Field label="Icon">
+          <EmojiPicker value={draft.meal.emoji ?? '🍽️'} onChange={(emoji) => patchMeal({ emoji })} />
+        </Field>
+
+        <Field label="How often?" hint="Pick 'Every other week' for things like spaghetti every second Monday.">
+          <SchedulePicker
+            value={draft.schedule}
+            onChange={(schedule) => setDraft({ ...draft, schedule })}
+            today={today}
+          />
+        </Field>
+
+        <Field label="Who cooks?">
+          <div className="row wrap" style={{ gap: 8 }}>
+            <button
+              className={`person-pill${!draft.meal.cookId ? ' on' : ''}`}
+              onClick={() => patchMeal({ cookId: undefined })}
+            >
+              <span className="person-pill-all">🤷</span> Nobody yet
+            </button>
+            {state.core.people
+              .filter((person) => !person.archived)
+              .map((person) => (
+                <button
+                  key={person.id}
+                  className={`person-pill${draft.meal.cookId === person.id ? ' on' : ''}`}
+                  style={tint(person.color)}
+                  onClick={() => patchMeal({ cookId: person.id })}
+                >
+                  <Avatar person={person} size={26} />
+                  {person.name}
+                </button>
+              ))}
+          </div>
+        </Field>
+
+        <Field label="Notes">
+          <textarea
+            value={draft.meal.notes ?? ''}
+            onChange={(event) => patchMeal({ notes: event.target.value })}
+            placeholder="Sides, timing, anything to remember"
+          />
+        </Field>
+
+        {rule !== 'new' && rule ? (
+          <DangerRow label="Stop repeating this meal" onClick={() => setConfirming(true)} />
+        ) : null}
+      </Sheet>
+
+      <ConfirmDialog
+        open={confirming}
+        title="Stop repeating?"
+        message="Days where you already pinned this meal keep it."
+        confirmLabel="Stop repeating"
+        onConfirm={() => {
+          if (rule && rule !== 'new') onDelete(rule.id)
+          onClose()
+        }}
+        onClose={() => setConfirming(false)}
       />
     </>
   )
@@ -333,10 +546,12 @@ function MealEditor({
   target,
   onClose,
   onAddIngredients,
+  onRepeat,
 }: {
   target: { date: string; slot: MealSlot } | null
   onClose: () => void
   onAddIngredients: (names: string[], from: string) => void
+  onRepeat: (meal: Meal, slot: MealSlot) => void
 }) {
   const { state, dispatch } = useApp()
   const [draft, setDraft] = useState<Meal>({ title: '' })
@@ -344,9 +559,12 @@ function MealEditor({
   const [picking, setPicking] = useState(false)
 
   const key = target ? `${target.date}:${target.slot}` : ''
+  const fromRule = target ? resolveMeal(state.core, target.date, target.slot)?.ruleId : undefined
   if (target && seeded !== key) {
     setSeeded(key)
-    setDraft(structuredClone(state.core.meals[target.date]?.[target.slot] ?? { title: '' }))
+    // Seed from whatever is showing, including a repeating meal, so editing
+    // one day starts from the meal that is actually on the menu.
+    setDraft(structuredClone(resolveMeal(state.core, target.date, target.slot)?.meal ?? { title: '' }))
   }
 
   const patch = (changes: Partial<Meal>) => setDraft((current) => ({ ...current, ...changes }))
@@ -473,6 +691,22 @@ function MealEditor({
               <Icon name="cart" size={18} /> Add {draft.ingredients.length} ingredients to shopping
             </button>
           ) : null}
+
+          {fromRule ? (
+            <p className="field-hint" style={{ marginTop: 18 }}>
+              🔁 This one repeats. Saving here changes just this day; use{' '}
+              <strong>Repeats</strong> at the top of the week to change the schedule.
+            </p>
+          ) : (
+            <button
+              className="btn btn-soft btn-block"
+              style={{ marginTop: 18 }}
+              disabled={!draft.title.trim()}
+              onClick={() => target && onRepeat({ ...draft, title: draft.title.trim() }, target.slot)}
+            >
+              <Icon name="refresh" size={17} /> Make this repeat
+            </button>
+          )}
         </>
       )}
     </Sheet>

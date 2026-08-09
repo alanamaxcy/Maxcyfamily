@@ -16,6 +16,8 @@ import {
   ingredientNames,
   makeRecipeId,
   parseIngredientLine,
+  externalUrl,
+  urlHost,
   type Ingredient,
   type Recipe,
   type RecipeCategory,
@@ -362,9 +364,15 @@ function RecipeDetail({
         </Field>
       </div>
 
-      {recipe.url ? (
-        <a className="btn btn-ghost btn-block" style={{ marginTop: 16 }} href={recipe.url} target="_blank" rel="noreferrer">
-          <Icon name="link" size={17} /> Open the original
+      {externalUrl(recipe.url) ? (
+        <a
+          className="btn btn-soft btn-block"
+          style={{ marginTop: 16 }}
+          href={externalUrl(recipe.url) ?? undefined}
+          target="_blank"
+          rel="noreferrer noopener"
+        >
+          <Icon name="link" size={17} /> Open on {urlHost(recipe.url)}
         </a>
       ) : null}
     </motion.div>

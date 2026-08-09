@@ -38,6 +38,12 @@ export type Schedule =
   | { type: 'once'; date: ISODate }
   /** Every n days counting from startDate. */
   | { type: 'everyN'; n: number; startDate: ISODate }
+  /**
+   * On these weekdays, but only every n-th week — "every other Monday".
+   * Week alignment is anchored to the Sunday of startDate's week so it does
+   * not drift when the household changes its week-starts-on preference.
+   */
+  | { type: 'weeklyN'; days: number[]; everyWeeks: number; startDate: ISODate }
 
 export interface Chore {
   id: ID
@@ -131,7 +137,23 @@ export interface Meal {
   cookId?: ID
 }
 
-export type DayMeals = Partial<Record<MealSlot, Meal>> & { note?: string }
+export type DayMeals = Partial<Record<MealSlot, Meal>> & {
+  note?: string
+  /** Slots deliberately cleared, so a repeating meal stays off for this day. */
+  skipped?: MealSlot[]
+}
+
+/**
+ * A meal that comes back on a schedule — "spaghetti every other Monday".
+ * An explicit meal on a date always wins over the rule.
+ */
+export interface MealRule {
+  id: ID
+  slot: MealSlot
+  meal: Meal
+  schedule: Schedule
+  archived?: boolean
+}
 
 export type ShoppingCategory =
   | 'produce'
@@ -283,6 +305,7 @@ export interface Core {
   todoLists: TodoList[]
   todos: Todo[]
   meals: Record<ISODate, DayMeals>
+  mealRules: MealRule[]
   shopping: ShoppingItem[]
   rewards: Reward[]
   events: LocalEvent[]

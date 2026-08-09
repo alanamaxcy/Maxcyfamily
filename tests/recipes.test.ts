@@ -13,6 +13,8 @@ import {
   parseRecipeHtml,
   pretty,
   stripTags,
+  externalUrl,
+  urlHost,
 } from '@shared/recipes.ts'
 import { guessCategory, splitQuantity } from '@shared/categorize.ts'
 
@@ -206,5 +208,47 @@ describe('shopping helpers', () => {
   it('splits a leading quantity off the name', () => {
     expect(splitQuantity('2 lbs chicken thighs')).toEqual({ qty: '2 lbs', text: 'chicken thighs' })
     expect(splitQuantity('milk')).toEqual({ text: 'milk' })
+  })
+})
+
+describe('externalUrl', () => {
+  it('adds a scheme to the bare hostnames in the seed data', () => {
+    // Without this the browser treats it as a relative path and the SPA
+    // catch-all serves index.html — the link appears to do nothing.
+    expect(externalUrl('cooknourishbliss.com/2020/02/11/classic-dairy-free-waffles')).toBe(
+      'https://cooknourishbliss.com/2020/02/11/classic-dairy-free-waffles',
+    )
+  })
+
+  it('leaves a full URL alone', () => {
+    expect(externalUrl('https://example.com/x')).toBe('https://example.com/x')
+    expect(externalUrl('http://example.com/x')).toBe('http://example.com/x')
+  })
+
+  it('upgrades protocol-relative links', () => {
+    expect(externalUrl('//example.com/x')).toBe('https://example.com/x')
+  })
+
+  it('refuses script-bearing and non-web schemes', () => {
+    expect(externalUrl('javascript:alert(1)')).toBeNull()
+    expect(externalUrl('data:text/html,<script>')).toBeNull()
+    expect(externalUrl('file:///etc/passwd')).toBeNull()
+  })
+
+  it('returns null for empty or non-hostname text', () => {
+    expect(externalUrl('')).toBeNull()
+    expect(externalUrl(undefined)).toBeNull()
+    expect(externalUrl('just some notes')).toBeNull()
+  })
+
+  it('every seeded recipe produces a usable link', () => {
+    for (const recipe of SEED_RECIPES) {
+      expect(externalUrl(recipe.url)).toMatch(/^https:\/\//)
+    }
+  })
+
+  it('names the host for the button label', () => {
+    expect(urlHost('cooknourishbliss.com/2020/x')).toBe('cooknourishbliss.com')
+    expect(urlHost('https://www.example.com/x')).toBe('example.com')
   })
 })

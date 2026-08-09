@@ -2,42 +2,37 @@
 
 import { useState } from 'react'
 import { motion, AnimatePresence, Reorder } from 'framer-motion'
-import type { Chore, Routine, RoutineStep } from '@shared/types.ts'
+import type { Chore, Routine, RoutineStep, ScheduleBlock } from '@shared/types.ts'
 import { newId } from '@shared/id.ts'
-import { DAY_SHORT } from '@shared/date.ts'
-import { isDueOn, routineProgress } from '@shared/schedule.ts'
+import { formatClockTime, isDueOn, minutesOfDay, routineProgress, scheduleSummary } from '@shared/schedule.ts'
 import { useApp } from '../lib/store.tsx'
 import { Avatar, Empty, Field, ProgressRing, Segmented, SPRING, tint } from '../components/ui.tsx'
 import { Icon } from '../components/Icon.tsx'
 import { Sheet, ConfirmDialog } from '../components/Sheet.tsx'
-import { ColorPicker, DangerRow, EmojiPicker, PersonPicker, SchedulePicker, Stepper } from './editors/parts.tsx'
-
-function scheduleSummary(schedule: Chore['schedule']): string {
-  switch (schedule.type) {
-    case 'daily':
-      return 'Every day'
-    case 'weekly':
-      return schedule.days.length === 7
-        ? 'Every day'
-        : schedule.days.length === 0
-          ? 'No days picked'
-          : schedule.days.map((day) => DAY_SHORT[day]).join(' · ')
-    case 'once':
-      return `Once on ${schedule.date}`
-    case 'everyN':
-      return `Every ${schedule.n} days`
-  }
-}
+import { BlockEditor } from './editors/BlockEditor.tsx'
+import {
+  ColorPicker,
+  DangerRow,
+  EmojiButton,
+  EmojiPicker,
+  PersonPicker,
+  SchedulePicker,
+  Stepper,
+} from './editors/parts.tsx'
 
 export function RoutinesView() {
   const { state, today, dispatch } = useApp()
-  const [tab, setTab] = useState<'routines' | 'chores'>('routines')
+  const [tab, setTab] = useState<'schedule' | 'routines' | 'chores'>('schedule')
   const [editingRoutine, setEditingRoutine] = useState<Routine | 'new' | null>(null)
   const [editingChore, setEditingChore] = useState<Chore | 'new' | null>(null)
+  const [editingBlock, setEditingBlock] = useState<ScheduleBlock | 'new' | null>(null)
 
   const people = state.core.people.filter((person) => !person.archived)
   const routines = state.core.routines.filter((routine) => !routine.archived)
   const chores = state.core.chores.filter((chore) => !chore.archived)
+  const blocks = [...state.core.schedule]
+    .filter((block) => !block.archived)
+    .sort((a, b) => minutesOfDay(a.startTime) - minutesOfDay(b.startTime) || a.sort - b.sort)
 
   return (
     <>
@@ -48,9 +43,14 @@ export function RoutinesView() {
         </div>
         <button
           className="btn btn-accent btn-sm"
-          onClick={() => (tab === 'routines' ? setEditingRoutine('new') : setEditingChore('new'))}
+          onClick={() => {
+            if (tab === 'schedule') setEditingBlock('new')
+            else if (tab === 'routines') setEditingRoutine('new')
+            else setEditingChore('new')
+          }}
         >
-          <Icon name="plus" size={17} /> {tab === 'routines' ? 'Routine' : 'Chore'}
+          <Icon name="plus" size={17} />{' '}
+          {tab === 'schedule' ? 'Block' : tab === 'routines' ? 'Routine' : 'Chore'}
         </button>
       </div>
 
@@ -59,11 +59,57 @@ export function RoutinesView() {
           value={tab}
           onChange={setTab}
           options={[
+            { value: 'schedule', label: 'Schedule' },
             { value: 'routines', label: 'Routines' },
             { value: 'chores', label: 'Chores' },
           ]}
         />
       </div>
+
+      {tab === 'schedule' ? (
+        blocks.length === 0 ? (
+          <Empty
+            emoji="🗓️"
+            title="No schedule blocks"
+            hint="These are the parts of a normal day — lessons, meals, quiet time."
+            action={
+              <button className="btn btn-accent" onClick={() => setEditingBlock('new')}>
+                <Icon name="plus" size={18} /> New block
+              </button>
+            }
+          />
+        ) : (
+          <div className="card" style={{ padding: 6 }}>
+            {blocks.map((block) => {
+              const owners = people.filter((person) => block.personIds.includes(person.id))
+              return (
+                <button key={block.id} className="manage-row" onClick={() => setEditingBlock(block)}>
+                  <span className="block-time numeral" style={{ color: block.color }}>
+                    {formatClockTime(block.startTime)}
+                  </span>
+                  <span className="manage-emoji">{block.emoji}</span>
+                  <div style={{ flex: 1, minWidth: 0, textAlign: 'left' }}>
+                    <div className="truncate" style={{ fontWeight: 600 }}>{block.title}</div>
+                    <div className="tiny">
+                      {scheduleSummary(block.schedule)} · until {formatClockTime(block.endTime)}
+                    </div>
+                  </div>
+                  {owners.length > 0 ? (
+                    <span className="row" style={{ gap: 4 }}>
+                      {owners.slice(0, 3).map((person) => (
+                        <Avatar key={person.id} person={person} size={24} />
+                      ))}
+                    </span>
+                  ) : (
+                    <span className="chip" style={{ height: 26, fontSize: 11.5 }}>Everyone</span>
+                  )}
+                  <Icon name="chevronRight" size={17} />
+                </button>
+              )
+            })}
+          </div>
+        )
+      ) : null}
 
       {tab === 'routines' ? (
         routines.length === 0 ? (
@@ -139,7 +185,10 @@ export function RoutinesView() {
             })}
           </div>
         )
-      ) : chores.length === 0 ? (
+      ) : null}
+
+      {tab === 'chores' ? (
+        chores.length === 0 ? (
         <Empty
           emoji="🧹"
           title="No chores yet"
@@ -150,10 +199,10 @@ export function RoutinesView() {
             </button>
           }
         />
-      ) : (
-        <div className="stack">
-          {Object.entries(
-            chores.reduce<Record<string, Chore[]>>((groups, chore) => {
+        ) : (
+          <div className="stack">
+            {Object.entries(
+              chores.reduce<Record<string, Chore[]>>((groups, chore) => {
               const key = chore.category?.trim() || 'Other'
               ;(groups[key] ??= []).push(chore)
               return groups
@@ -188,11 +237,18 @@ export function RoutinesView() {
                   )
                 })}
               </div>
-            </div>
-          ))}
-        </div>
-      )}
+              </div>
+            ))}
+          </div>
+        )
+      ) : null}
 
+      <BlockEditor
+        block={editingBlock}
+        onClose={() => setEditingBlock(null)}
+        onSave={(block) => dispatch({ t: 'block.upsert', block })}
+        onDelete={(id) => dispatch({ t: 'block.remove', id })}
+      />
       <RoutineEditor
         routine={editingRoutine}
         onClose={() => setEditingRoutine(null)}
@@ -314,11 +370,10 @@ function RoutineEditor({
               {draft.steps.map((step) => (
                 <Reorder.Item key={step.id} value={step} className="step-row" transition={SPRING}>
                   <span className="step-grip"><Icon name="drag" size={18} /></span>
-                  <input
-                    className="step-emoji-input"
+                  <EmojiButton
                     value={step.emoji}
-                    onChange={(event) => setStep(step.id, { emoji: event.target.value.slice(0, 4) })}
-                    aria-label="Step icon"
+                    onChange={(emoji) => setStep(step.id, { emoji })}
+                    label={`Icon for ${step.title || 'this step'}`}
                   />
                   <input
                     value={step.title}

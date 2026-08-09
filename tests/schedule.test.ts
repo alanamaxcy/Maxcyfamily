@@ -8,7 +8,14 @@ import {
   monthKeysBetween,
   startOfWeek,
 } from '@shared/date.ts'
-import { blocksForDate, isDueOn, minutesOfDay, formatClockTime } from '@shared/schedule.ts'
+import {
+  blocksForDate,
+  formatClockTime,
+  isDueOn,
+  minutesOfDay,
+  resolveMeal,
+  scheduleSummary,
+} from '@shared/schedule.ts'
 import { initialState } from '@shared/seed.ts'
 
 describe('isDueOn', () => {
@@ -114,5 +121,83 @@ describe('formatClockTime', () => {
     expect(formatClockTime('13:15')).toBe('1:15 PM')
     expect(formatClockTime('00:30')).toBe('12:30 AM')
     expect(formatClockTime('12:00')).toBe('12:00 PM')
+  })
+})
+
+describe('weeklyN — "every other Monday"', () => {
+  // 2026-08-03 is a Monday.
+  const everyOtherMonday = { type: 'weeklyN' as const, days: [1], everyWeeks: 2, startDate: '2026-08-03' }
+
+  it('fires on the anchor week and skips the next', () => {
+    expect(isDueOn(everyOtherMonday, '2026-08-03')).toBe(true)
+    expect(isDueOn(everyOtherMonday, '2026-08-10')).toBe(false)
+    expect(isDueOn(everyOtherMonday, '2026-08-17')).toBe(true)
+    expect(isDueOn(everyOtherMonday, '2026-08-24')).toBe(false)
+  })
+
+  it('ignores other weekdays', () => {
+    expect(isDueOn(everyOtherMonday, '2026-08-04')).toBe(false)
+    expect(isDueOn(everyOtherMonday, '2026-08-05')).toBe(false)
+  })
+
+  it('never fires before the anchor week', () => {
+    expect(isDueOn(everyOtherMonday, '2026-07-27')).toBe(false)
+  })
+
+  it('supports longer cycles and multiple days', () => {
+    const everyThird = { type: 'weeklyN' as const, days: [1, 5], everyWeeks: 3, startDate: '2026-08-03' }
+    expect(isDueOn(everyThird, '2026-08-03')).toBe(true) // Mon, week 0
+    expect(isDueOn(everyThird, '2026-08-07')).toBe(true) // Fri, week 0
+    expect(isDueOn(everyThird, '2026-08-10')).toBe(false) // week 1
+    expect(isDueOn(everyThird, '2026-08-24')).toBe(true) // week 3
+  })
+
+  it('describes itself in plain words', () => {
+    expect(scheduleSummary(everyOtherMonday)).toBe('Every other Mon')
+    expect(scheduleSummary({ type: 'weekly', days: [1, 2, 3, 4, 5] })).toBe('Weekdays')
+  })
+})
+
+describe('repeating meals', () => {
+  function withRule() {
+    const state = initialState()
+    state.core.mealRules = [
+      {
+        id: 'mr1',
+        slot: 'dinner',
+        meal: { title: 'Spaghetti', emoji: '🍝' },
+        schedule: { type: 'weeklyN', days: [1], everyWeeks: 2, startDate: '2026-08-03' },
+      },
+    ]
+    return state
+  }
+
+  it('fills the slot on matching days only', () => {
+    const state = withRule()
+    expect(resolveMeal(state.core, '2026-08-03', 'dinner')?.meal.title).toBe('Spaghetti')
+    expect(resolveMeal(state.core, '2026-08-10', 'dinner')).toBeNull()
+    expect(resolveMeal(state.core, '2026-08-03', 'lunch')).toBeNull()
+  })
+
+  it('marks a rule-derived meal so the UI can badge it', () => {
+    const state = withRule()
+    expect(resolveMeal(state.core, '2026-08-03', 'dinner')?.ruleId).toBe('mr1')
+  })
+
+  it('lets an explicit meal win for one day', () => {
+    const state = withRule()
+    state.core.meals['2026-08-03'] = { dinner: { title: 'Takeaway' } }
+
+    const resolved = resolveMeal(state.core, '2026-08-03', 'dinner')
+    expect(resolved?.meal.title).toBe('Takeaway')
+    expect(resolved?.ruleId).toBeUndefined()
+    // The rule still applies to later occurrences.
+    expect(resolveMeal(state.core, '2026-08-17', 'dinner')?.meal.title).toBe('Spaghetti')
+  })
+
+  it('honours a skip so a cleared day stays cleared', () => {
+    const state = withRule()
+    state.core.meals['2026-08-03'] = { skipped: ['dinner'] }
+    expect(resolveMeal(state.core, '2026-08-03', 'dinner')).toBeNull()
   })
 })

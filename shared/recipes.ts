@@ -418,6 +418,36 @@ export function parseRecipeHtml(html: string, sourceUrl: string): ParsedImport {
   return { recipe, foundRecipe: Boolean(data) }
 }
 
+/**
+ * Turns a stored source into something a browser will actually navigate to.
+ *
+ * The seeded recipes carry bare hostnames ("cooknourishbliss.com/…"), which a
+ * browser treats as a *relative* path — the SPA catch-all then serves index.html
+ * and the link appears to do nothing. Anything without a scheme gets https://,
+ * and script-bearing schemes are refused outright.
+ */
+export function externalUrl(url: string | undefined | null): string | null {
+  const trimmed = (url ?? '').trim()
+  if (!trimmed) return null
+  if (/^(javascript|data|vbscript|file):/i.test(trimmed)) return null
+  if (/^https?:\/\//i.test(trimmed)) return trimmed
+  if (/^\/\//.test(trimmed)) return `https:${trimmed}`
+  // Require something that at least looks like a hostname before guessing.
+  if (!/^[\w-]+(\.[\w-]+)+/.test(trimmed)) return null
+  return `https://${trimmed}`
+}
+
+/** "cooknourishbliss.com/2020/…" -> "cooknourishbliss.com" */
+export function urlHost(url: string | undefined | null): string {
+  const full = externalUrl(url)
+  if (!full) return ''
+  try {
+    return new URL(full).hostname.replace(/^www\./, '')
+  } catch {
+    return ''
+  }
+}
+
 export function makeRecipeId(title: string): ID {
   const slug = title
     .toLowerCase()

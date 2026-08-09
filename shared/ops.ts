@@ -21,6 +21,7 @@ import type {
   LedgerEntry,
   LocalEvent,
   Meal,
+  MealRule,
   MealSlot,
   MonthKey,
   Person,
@@ -54,6 +55,8 @@ export type Op =
   | { t: 'todo.remove'; id: ID }
   | { t: 'todo.clearDone'; listId: ID }
   | { t: 'meal.set'; date: ISODate; slot: MealSlot; meal: Meal | null }
+  | { t: 'mealRule.upsert'; rule: MealRule }
+  | { t: 'mealRule.remove'; id: ID }
   | { t: 'meal.note'; date: ISODate; note: string }
   | { t: 'meal.clearWeek'; dates: ISODate[] }
   | { t: 'shopping.upsert'; item: ShoppingItem }
@@ -287,12 +290,27 @@ function applyOp(state: FullState, op: Op): void {
 
     case 'meal.set': {
       const day = core.meals[op.date] ?? {}
-      if (op.meal) day[op.slot] = op.meal
-      else delete day[op.slot]
+      if (op.meal) {
+        day[op.slot] = op.meal
+        // Pinning a meal cancels any earlier "skip this day" for the slot.
+        if (day.skipped) day.skipped = day.skipped.filter((slot) => slot !== op.slot)
+      } else {
+        delete day[op.slot]
+        // Record the skip so a repeating meal doesn't reappear on this date.
+        day.skipped = [...new Set([...(day.skipped ?? []), op.slot])]
+      }
+      if (day.skipped?.length === 0) delete day.skipped
       if (Object.keys(day).length === 0) delete core.meals[op.date]
       else core.meals[op.date] = day
       break
     }
+
+    case 'mealRule.upsert':
+      upsertById(core.mealRules, op.rule)
+      break
+    case 'mealRule.remove':
+      core.mealRules = core.mealRules.filter((rule) => rule.id !== op.id)
+      break
     case 'meal.note': {
       const day = core.meals[op.date] ?? {}
       if (op.note) day.note = op.note

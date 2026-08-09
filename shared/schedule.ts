@@ -10,12 +10,14 @@ import type {
   FullState,
   ID,
   ISODate,
+  Meal,
+  MealSlot,
   MonthKey,
   Routine,
   Schedule,
   ScheduleBlock,
 } from './types.ts'
-import { addDays, dayOfWeek, daysBetween, monthKeyOf } from './date.ts'
+import { addDays, dayOfWeek, daysBetween, monthKeyOf, startOfWeek } from './date.ts'
 import { choreKey, routineStepKey } from './ops.ts'
 
 export function isDueOn(schedule: Schedule, date: ISODate): boolean {
@@ -31,6 +33,79 @@ export function isDueOn(schedule: Schedule, date: ISODate): boolean {
       if (delta < 0) return false
       const n = Math.max(1, Math.floor(schedule.n))
       return delta % n === 0
+    }
+    case 'weeklyN': {
+      if (!schedule.days.includes(dayOfWeek(date))) return false
+      // Compare whole weeks from a fixed Sunday anchor, so the cadence is
+      // stable no matter what the household sets week-starts-on to.
+      const anchor = startOfWeek(schedule.startDate, 0)
+      const thisWeek = startOfWeek(date, 0)
+      const weeks = Math.round(daysBetween(anchor, thisWeek) / 7)
+      if (weeks < 0) return false
+      return weeks % Math.max(1, Math.floor(schedule.everyWeeks)) === 0
+    }
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Meals                                                              */
+/* ------------------------------------------------------------------ */
+
+export interface ResolvedMeal {
+  meal: Meal
+  /** Set when this came from a repeating rule rather than being pinned. */
+  ruleId?: ID
+}
+
+/**
+ * What is actually on the menu for a slot.
+ *
+ * An explicit meal wins; then a skip clears the slot for that day; otherwise
+ * the first matching repeating rule fills it in.
+ */
+export function resolveMeal(core: Core, date: ISODate, slot: MealSlot): ResolvedMeal | null {
+  const day = core.meals[date]
+  const explicit = day?.[slot]
+  if (explicit) return { meal: explicit }
+  if (day?.skipped?.includes(slot)) return null
+
+  const rule = core.mealRules.find(
+    (entry) => !entry.archived && entry.slot === slot && isDueOn(entry.schedule, date),
+  )
+  return rule ? { meal: rule.meal, ruleId: rule.id } : null
+}
+
+export function resolveDayMeals(core: Core, date: ISODate): Record<MealSlot, ResolvedMeal | null> {
+  return {
+    breakfast: resolveMeal(core, date, 'breakfast'),
+    lunch: resolveMeal(core, date, 'lunch'),
+    dinner: resolveMeal(core, date, 'dinner'),
+  }
+}
+
+const DAY_ABBR = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+
+/** Human wording for a schedule, used anywhere one is listed. */
+export function scheduleSummary(schedule: Schedule): string {
+  switch (schedule.type) {
+    case 'daily':
+      return 'Every day'
+    case 'weekly':
+      if (schedule.days.length === 7) return 'Every day'
+      if (schedule.days.length === 0) return 'No days picked'
+      if (schedule.days.length === 5 && [1, 2, 3, 4, 5].every((d) => schedule.days.includes(d))) {
+        return 'Weekdays'
+      }
+      return schedule.days.map((day) => DAY_ABBR[day]).join(' · ')
+    case 'once':
+      return `Once on ${schedule.date}`
+    case 'everyN':
+      return schedule.n === 1 ? 'Every day' : `Every ${schedule.n} days`
+    case 'weeklyN': {
+      const days = schedule.days.map((day) => DAY_ABBR[day]).join(' · ') || 'no days'
+      if (schedule.everyWeeks <= 1) return days
+      if (schedule.everyWeeks === 2) return `Every other ${days}`
+      return `${days}, every ${schedule.everyWeeks} weeks`
     }
   }
 }
