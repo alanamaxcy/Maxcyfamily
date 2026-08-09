@@ -2477,3 +2477,45 @@
     max-height: none;
   }
 }
+
+/* ================================================================== */
+/* Top bar on a phone                                                  */
+/* ================================================================== */
+
+/*
+ * The bar is laid out for a portrait iPad. On a phone the clock, the weather
+ * chip and the two buttons together are wider than the viewport, which pushed
+ * the settings gear (and later the sleep button) off the right edge entirely —
+ * invisible, because the body is overflow:hidden rather than scrollable.
+ * Tighten everything that can be tightened.
+ */
+@media (max-width: 620px) {
+  .topbar {
+    gap: 8px;
+    padding-inline: 12px;
+  }
+
+  .topbar .icon-btn {
+    width: 40px;
+    height: 40px;
+  }
+
+  .weather-chip {
+    height: 46px;
+    padding: 0 12px 0 8px;
+    gap: 7px;
+  }
+
+  /* The hi/lo is the first thing to go; the current temperature stays. */
+  .weather-chip .tiny {
+    display: none;
+  }
+
+  .weather-chip-temp {
+    font-size: 20px;
+  }
+
+  .topbar-clock {
+    gap: 5px;
+  }
+}

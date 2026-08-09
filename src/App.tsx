@@ -28,6 +28,9 @@ function Shell() {
   const { state, loaded, status, errorMessage } = useApp()
   const [route, navigate] = useHashRoute('today')
   const [settingsOpen, setSettingsOpen] = useState(false)
+  // Set by the top-bar moon; independent of the idle timer so it works even
+  // when the automatic sleep screen is switched off.
+  const [forceSleep, setForceSleep] = useState(false)
   const now = useNow('minute')
 
   const { theme, timezone, sleep } = state.core.settings
@@ -42,7 +45,8 @@ function Shell() {
 
   // Suppressed while settings are open, so a long edit session doesn't get
   // covered by the photo screen. Any tap resets it, which is what wakes it.
-  const asleep = useIdle(sleep.idleMinutes, sleep.enabled && !settingsOpen)
+  const idle = useIdle(sleep.idleMinutes, sleep.enabled && !settingsOpen && !forceSleep)
+  const asleep = forceSleep || idle
 
   const activeTab = route.startsWith('person/') ? 'profiles' : route
   const personId = route.startsWith('person/') ? route.slice('person/'.length) : null
@@ -89,7 +93,11 @@ function Shell() {
 
   return (
     <div className="app">
-      <TopBar onOpenSettings={() => setSettingsOpen(true)} onOpenWeather={() => navigate('weather')} />
+      <TopBar
+        onOpenSettings={() => setSettingsOpen(true)}
+        onOpenWeather={() => navigate('weather')}
+        onSleepNow={() => setForceSleep(true)}
+      />
 
       <main className="page" key={route}>
         <AnimatePresence mode="wait">
@@ -120,7 +128,7 @@ function Shell() {
       <SettingsView open={settingsOpen} onClose={() => setSettingsOpen(false)} />
 
       <AnimatePresence>
-        {asleep ? <Screensaver onWake={() => undefined} /> : null}
+        {asleep ? <Screensaver onWake={() => setForceSleep(false)} /> : null}
       </AnimatePresence>
 
       <Celebrations />

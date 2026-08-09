@@ -40,7 +40,15 @@ function RollingText({ text, className }: { text: string; className?: string }) 
   )
 }
 
-export function TopBar({ onOpenSettings, onOpenWeather }: { onOpenSettings: () => void; onOpenWeather: () => void }) {
+export function TopBar({
+  onOpenSettings,
+  onOpenWeather,
+  onSleepNow,
+}: {
+  onOpenSettings: () => void
+  onOpenWeather: () => void
+  onSleepNow: () => void
+}) {
   const { state, today, weather, status, pendingCount } = useApp()
   const now = useNow('minute')
   const { timezone } = state.core.settings
@@ -110,6 +118,7 @@ export function TopBar({ onOpenSettings, onOpenWeather }: { onOpenSettings: () =
           <div className="skeleton" style={{ width: 128, height: 56, borderRadius: 999 }} />
         )}
 
+        <IconButton icon="moon" label="Start the sleep screen" onClick={onSleepNow} />
         <IconButton icon="settings" label="Settings" onClick={onOpenSettings} />
       </div>
     </header>

@@ -135,6 +135,13 @@ img {
   z-index: 1;
   height: 100%;
   display: grid;
+  /*
+   * An implicit `auto` column takes its minimum from content, so one wide
+   * inflexible child stretched the whole track past the viewport — dragging
+   * the top bar with it and pushing the buttons off the right edge on a phone.
+   * minmax(0, 1fr) pins the track to the container so overflow clips instead.
+   */
+  grid-template-columns: minmax(0, 1fr);
   grid-template-rows: auto minmax(0, 1fr) auto;
 }
 
@@ -144,6 +151,7 @@ img {
   -webkit-overflow-scrolling: touch;
   padding: var(--sp-5) var(--page-pad) calc(var(--sp-8) + env(safe-area-inset-bottom));
   scrollbar-width: none;
+  min-width: 0;
 }
 
 /* The display is a portrait iPad, but the same URL gets opened on a laptop.

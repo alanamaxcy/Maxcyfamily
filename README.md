@@ -34,6 +34,9 @@ assignable.
   in the foreground.
 - Guided Access (Settings → Accessibility) locks the iPad to just this app if
   you want to hand it to a small person without incident.
+- The **moon** button in the top bar starts the photo screen immediately,
+  without waiting for the idle timer. It works even if the automatic sleep
+  screen is switched off in Settings. Tap the photo to come back.
 
 ---
 
