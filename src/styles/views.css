@@ -2027,15 +2027,58 @@
   :root {
     --page-pad: 16px;
     --topbar-h: 84px;
-    --nav-h: 78px;
+    --nav-h: 68px;
   }
 
   .topbar-time {
     font-size: 32px;
   }
 
+  /*
+   * Eight tabs at 68px minimum is 582px — wider than a 390px phone, so
+   * Recipes, To-dos and Family sat off the right edge with no scroll hint.
+   * Let every tab shrink to an equal share instead.
+   */
+  .nav {
+    gap: 2px;
+    padding-inline: 4px;
+    overflow-x: visible;
+  }
+
+  .nav-label-full {
+    display: none;
+  }
+
+  .nav-label-short {
+    display: block;
+  }
+
   .nav-item {
-    min-width: 68px;
+    min-width: 0;
+    flex: 1 1 0;
+    height: 58px;
+    gap: 3px;
+    border-radius: var(--r-sm);
+  }
+
+  .nav-icon {
+    width: 22px;
+    height: 22px;
+  }
+
+  .nav-label {
+    /* Sized so the widest label ("Rewards") fits without an ellipsis at 390px. */
+    font-size: 9px;
+    letter-spacing: -0.01em;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    padding-inline: 1px;
+  }
+
+  .nav-pill {
+    inset: 3px 2px;
   }
 
   .meal-slots {

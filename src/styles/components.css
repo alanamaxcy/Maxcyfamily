@@ -428,12 +428,29 @@
   gap: 2px;
   position: relative;
   z-index: 20;
-  background: color-mix(in srgb, var(--surface) 78%, transparent);
-  backdrop-filter: blur(24px) saturate(180%);
-  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  /*
+   * Solid, not translucent. The nav is its own grid row — nothing scrolls
+   * underneath it — so the blur bought nothing and the 78% opacity let the
+   * page show through, which made the safe-area strip below the labels read
+   * as a stray white band instead of part of the bar.
+   */
+  background: var(--surface);
   border-top: 1px solid var(--line);
   overflow-x: auto;
   scrollbar-width: none;
+}
+
+/* The strip below the labels is the device's home-indicator / gesture area.
+   Content must not sit under it, but the bar's own colour should. */
+.nav::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: env(safe-area-inset-bottom);
+  background: var(--surface);
+  pointer-events: none;
 }
 
 .nav::-webkit-scrollbar {
@@ -481,6 +498,11 @@
   letter-spacing: 0.005em;
   position: relative;
   z-index: 1;
+}
+
+/* One of the two label variants is always hidden; see the narrow override. */
+.nav-label-short {
+  display: none;
 }
 
 .nav-pill {
