@@ -38,6 +38,29 @@ assignable.
   without waiting for the idle timer. It works even if the automatic sleep
   screen is switched off in Settings. Tap the photo to come back.
 
+### Getting updates onto a home-screen app
+
+Once the site is saved to a home screen it runs standalone and caches the
+document hard, so a new deploy can go unnoticed indefinitely. Two things keep
+that from happening:
+
+- **Cache headers.** The document is served `no-store`. The rule is written for
+  both `/` and `/index.html` on purpose: a standalone app loads `/` (the
+  manifest's `start_url`), and Netlify matches header rules on the request path,
+  so a rule for `/index.html` alone never fires for it. Only the hashed files
+  under `/assets/` are cached, and those are immutable by construction.
+- **The app checks for itself.** Each build stamps an id into the bundle and
+  writes it to `/version.json`. The app re-reads that file every 15 minutes and
+  whenever it returns to the foreground; if the deployed id differs you get a
+  *"A newer version is ready"* banner. On a wall display nobody taps that, so
+  when an update is pending and the sleep screen has been up for two minutes it
+  reloads on its own — the screen is showing a photo, so nothing flashes.
+
+**An app installed before this shipped still has the old cached document.** To
+get it onto the current build once: delete the home-screen icon, open the URL
+in the browser and refresh, then add it to the home screen again. After that it
+keeps itself current.
+
 ---
 
 ## Local development

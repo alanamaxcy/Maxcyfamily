@@ -2,9 +2,10 @@ import { useEffect, useMemo, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { hourInTimezone } from '@shared/date.ts'
 import { AppProvider, useApp } from './lib/store.tsx'
-import { useHashRoute, useIdle, useNow, useResolvedTheme, useWakeLock } from './lib/hooks.ts'
+import { useAppUpdate, useHashRoute, useIdle, useNow, useResolvedTheme, useWakeLock } from './lib/hooks.ts'
 import { TopBar } from './components/TopBar.tsx'
 import { Nav } from './components/Nav.tsx'
+import { Icon } from './components/Icon.tsx'
 import { Screensaver } from './components/Screensaver.tsx'
 import { Celebrations, Toasts } from './components/Celebrations.tsx'
 import { TodayView } from './views/TodayView.tsx'
@@ -47,6 +48,20 @@ function Shell() {
   // covered by the photo screen. Any tap resets it, which is what wakes it.
   const idle = useIdle(sleep.idleMinutes, sleep.enabled && !settingsOpen && !forceSleep)
   const asleep = forceSleep || idle
+
+  const updateReady = useAppUpdate()
+
+  /*
+   * Nobody refreshes a picture frame. When a newer build exists and the sleep
+   * screen has been up for a couple of minutes, reload — the screen is showing
+   * a photo, so the reload is invisible and the display comes back current.
+   * While someone is using it, they get a banner and choose for themselves.
+   */
+  useEffect(() => {
+    if (!updateReady || !asleep) return
+    const timer = window.setTimeout(() => window.location.reload(), 120_000)
+    return () => window.clearTimeout(timer)
+  }, [updateReady, asleep])
 
   const activeTab = route.startsWith('person/') ? 'profiles' : route
   const personId = route.startsWith('person/') ? route.slice('person/'.length) : null
@@ -108,6 +123,14 @@ function Shell() {
             exit={{ opacity: 0, y: -8 }}
             transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
           >
+            {updateReady ? (
+              <button className="banner banner-action" onClick={() => window.location.reload()}>
+                <Icon name="refresh" size={16} />
+                <span className="truncate">A newer version is ready</span>
+                <span className="banner-cta">Reload</span>
+              </button>
+            ) : null}
+
             {status === 'error' || status === 'offline' ? (
               // Plain language on the wall; the raw error is for the tooltip.
               <div className="banner" title={errorMessage ?? undefined}>

@@ -2562,3 +2562,25 @@
     gap: 5px;
   }
 }
+
+/* Tappable variant of the banner, used for "a newer version is ready". */
+.banner-action {
+  width: 100%;
+  text-align: left;
+  background: var(--cobalt-soft);
+  color: var(--cobalt-deep);
+  cursor: pointer;
+  transition: background var(--t-fast) var(--ease-out);
+}
+
+.banner-action:hover {
+  background: color-mix(in srgb, var(--cobalt) 20%, transparent);
+}
+
+.banner-cta {
+  margin-left: auto;
+  font-weight: 800;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  flex: none;
+}

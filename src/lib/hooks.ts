@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { BUILD_ID, fetchDeployedBuild } from './version.ts'
 
 /** A clock that re-renders on the minute boundary rather than drifting. */
 export function useNow(granularity: 'second' | 'minute' = 'minute'): Date {
@@ -125,6 +126,42 @@ export function useDebounced<T>(value: T, delay = 350): T {
   }, [value, delay])
 
   return debounced
+}
+
+/**
+ * True once the deployed build differs from the one this tab is running.
+ *
+ * Checked on a timer and whenever the app comes back to the foreground, which
+ * is when a phone most often notices. `dev` is skipped so the dev server never
+ * nags.
+ */
+export function useAppUpdate(intervalMs = 15 * 60_000): boolean {
+  const [stale, setStale] = useState(false)
+
+  useEffect(() => {
+    if (BUILD_ID === 'dev') return
+    let cancelled = false
+
+    const check = async () => {
+      const deployed = await fetchDeployedBuild()
+      if (!cancelled && deployed && deployed !== BUILD_ID) setStale(true)
+    }
+
+    void check()
+    const timer = window.setInterval(() => void check(), intervalMs)
+    const onVisible = () => {
+      if (document.visibilityState === 'visible') void check()
+    }
+    document.addEventListener('visibilitychange', onVisible)
+
+    return () => {
+      cancelled = true
+      window.clearInterval(timer)
+      document.removeEventListener('visibilitychange', onVisible)
+    }
+  }, [intervalMs])
+
+  return stale
 }
 
 /** Resolves 'auto' into a concrete theme using the household's clock. */
