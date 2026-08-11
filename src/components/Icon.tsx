@@ -7,7 +7,7 @@ export type IconName =
   | 'weather' | 'settings' | 'plus' | 'close' | 'chevronLeft' | 'chevronRight' | 'chevronDown'
   | 'search' | 'trash' | 'edit' | 'check' | 'refresh' | 'camera' | 'image' | 'undo' | 'more'
   | 'star' | 'flame' | 'cart' | 'clock' | 'sparkle' | 'lock' | 'download' | 'upload' | 'link'
-  | 'minus' | 'drag' | 'bell' | 'moon'
+  | 'minus' | 'drag' | 'bell' | 'moon' | 'menu'
 
 const PATHS: Record<IconName, string> = {
   today: 'M4 12 12 4l8 8M6 10.5V19a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1v-8.5',
@@ -47,6 +47,7 @@ const PATHS: Record<IconName, string> = {
   drag: 'M9 7h.01M9 12h.01M9 17h.01M15 7h.01M15 12h.01M15 17h.01',
   bell: 'M6.5 10a5.5 5.5 0 0 1 11 0c0 4 1.5 5.5 1.5 5.5H5S6.5 14 6.5 10ZM10 19a2 2 0 0 0 4 0',
   moon: 'M20 14.5A8.5 8.5 0 0 1 9.5 4 8.5 8.5 0 1 0 20 14.5Z',
+  menu: 'M4 7h16M4 12h16M4 17h16',
 }
 
 interface IconProps {

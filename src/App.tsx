@@ -5,6 +5,7 @@ import { AppProvider, useApp } from './lib/store.tsx'
 import { useAppUpdate, useHashRoute, useIdle, useNow, useResolvedTheme, useWakeLock } from './lib/hooks.ts'
 import { TopBar } from './components/TopBar.tsx'
 import { Nav } from './components/Nav.tsx'
+import { MORE_ITEMS, MoreMenu } from './components/MoreMenu.tsx'
 import { Icon } from './components/Icon.tsx'
 import { Screensaver } from './components/Screensaver.tsx'
 import { Celebrations, Toasts } from './components/Celebrations.tsx'
@@ -29,6 +30,7 @@ function Shell() {
   const { state, loaded, status, errorMessage } = useApp()
   const [route, navigate] = useHashRoute('today')
   const [settingsOpen, setSettingsOpen] = useState(false)
+  const [moreOpen, setMoreOpen] = useState(false)
   // Set by the top-bar moon; independent of the idle timer so it works even
   // when the automatic sleep screen is switched off.
   const [forceSleep, setForceSleep] = useState(false)
@@ -46,7 +48,7 @@ function Shell() {
 
   // Suppressed while settings are open, so a long edit session doesn't get
   // covered by the photo screen. Any tap resets it, which is what wakes it.
-  const idle = useIdle(sleep.idleMinutes, sleep.enabled && !settingsOpen && !forceSleep)
+  const idle = useIdle(sleep.idleMinutes, sleep.enabled && !settingsOpen && !moreOpen && !forceSleep)
   const asleep = forceSleep || idle
 
   const updateReady = useAppUpdate()
@@ -63,13 +65,17 @@ function Shell() {
     return () => window.clearTimeout(timer)
   }, [updateReady, asleep])
 
-  const activeTab = route.startsWith('person/') ? 'profiles' : route
   const personId = route.startsWith('person/') ? route.slice('person/'.length) : null
+  // A person page belongs to Home, which is where the faces are.
+  const activeTab = personId ? 'today' : route
+  const moreActive = MORE_ITEMS.some((item) => item.id === activeTab)
 
   const body = useMemo(() => {
     if (personId) return <PersonView personId={personId} onBack={() => navigate('today')} />
 
     switch (route) {
+      case 'schedule':
+      // 'calendar' kept as an alias so an old bookmark or hash still lands.
       case 'calendar':
         return <CalendarView />
       case 'routines':
@@ -118,6 +124,9 @@ function Shell() {
         <AnimatePresence mode="wait">
           <motion.div
             key={route}
+            // Home sizes its faces to the screen, so its wrapper has to fill
+            // the scroll area rather than shrink to its content.
+            className={route === 'today' ? 'route-fill' : undefined}
             initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
@@ -146,7 +155,19 @@ function Shell() {
         </AnimatePresence>
       </main>
 
-      <Nav active={activeTab} onChange={navigate} />
+      <Nav
+        active={activeTab}
+        onChange={navigate}
+        onOpenMore={() => setMoreOpen(true)}
+        moreActive={moreActive}
+      />
+
+      <MoreMenu
+        open={moreOpen}
+        onClose={() => setMoreOpen(false)}
+        onNavigate={navigate}
+        onOpenSettings={() => setSettingsOpen(true)}
+      />
 
       <SettingsView open={settingsOpen} onClose={() => setSettingsOpen(false)} />
 

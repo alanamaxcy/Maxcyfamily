@@ -294,6 +294,8 @@ export interface Settings {
   pin: string
   /** Show the confetti burst when a kid completes something. */
   celebrate: boolean
+  /** Merge connected-calendar events into the Schedule view's timeline. */
+  scheduleShowsEvents: boolean
 }
 
 /** Definitional + slow-moving data. Small enough to ship on every change. */

@@ -1,4 +1,4 @@
-/** Day, week and month over the household schedule and connected calendars. */
+/** The Schedule tab: the household's day full width, plus week and month. */
 
 import { useMemo, useState } from 'react'
 import { motion } from 'framer-motion'
@@ -22,7 +22,7 @@ import { Field, Segmented } from '../components/ui.tsx'
 import { Icon } from '../components/Icon.tsx'
 import { Sheet, ConfirmDialog } from '../components/Sheet.tsx'
 import { ColorPicker, DangerRow, PersonPicker } from './editors/parts.tsx'
-import { DayColumns } from '../components/DayColumns.tsx'
+import { DaySchedule } from '../components/DaySchedule.tsx'
 import { BlockEditor } from './editors/BlockEditor.tsx'
 
 type Mode = 'day' | 'week' | 'month'
@@ -84,7 +84,7 @@ export function CalendarView() {
   const [editingEvent, setEditingEvent] = useState<LocalEvent | 'new' | null>(null)
   const [editingBlock, setEditingBlock] = useState<ScheduleBlock | 'new' | null>(null)
 
-  const { weekStartsOn, timezone } = state.core.settings
+  const { weekStartsOn, timezone, scheduleShowsEvents: showEvents } = state.core.settings
 
   // A window wide enough for whichever view is showing.
   const windowStart = addDays(mode === 'month' ? `${monthKeyOf(cursor)}-01` : cursor, -40)
@@ -116,7 +116,7 @@ export function CalendarView() {
     <>
       <div className="section-head">
         <div style={{ minWidth: 0 }}>
-          <span className="eyebrow">Calendar</span>
+          <span className="eyebrow">Schedule</span>
           <h1 className="h1 truncate">
             {mode === 'day'
               ? formatDayLabel(cursor, today)
@@ -128,6 +128,9 @@ export function CalendarView() {
             <Icon name="chevronLeft" size={20} />
           </button>
           <button className="btn btn-soft btn-sm" onClick={() => setCursor(today)}>Today</button>
+          <button className="icon-btn" onClick={() => setEditingEvent('new')} aria-label="Add a calendar event">
+            <Icon name="calendar" size={19} />
+          </button>
           <button className="icon-btn" onClick={() => step(1)} aria-label="Next">
             <Icon name="chevronRight" size={20} />
           </button>
@@ -144,12 +147,27 @@ export function CalendarView() {
             { value: 'month', label: 'Month' },
           ]}
         />
-        <div className="row" style={{ gap: 4 }}>
+        <div className="row wrap" style={{ gap: 8 }}>
+          <button
+            className={`events-toggle${showEvents ? ' on' : ''}`}
+            onClick={() =>
+              dispatch({ t: 'settings.patch', patch: { scheduleShowsEvents: !showEvents } })
+            }
+            role="switch"
+            aria-checked={showEvents}
+            aria-label="Show calendar events on the schedule"
+          >
+            <Icon name="calendar" size={16} />
+            <span>Events</span>
+            <span className={`switch mini${showEvents ? ' on' : ''}`} aria-hidden="true">
+              <span className="switch-knob" />
+            </span>
+          </button>
           <button className="icon-btn" onClick={() => void reloadCalendar(true)} aria-label="Refresh calendars">
             <Icon name="refresh" size={19} />
           </button>
-          <button className="btn btn-accent btn-sm" onClick={() => setEditingEvent('new')}>
-            <Icon name="plus" size={17} /> Event
+          <button className="btn btn-accent btn-sm" onClick={() => setEditingBlock('new')}>
+            <Icon name="plus" size={17} /> Block
           </button>
         </div>
       </div>
@@ -197,13 +215,12 @@ export function CalendarView() {
       ) : null}
 
       {mode === 'day' ? (
-        <DayColumns
+        <DaySchedule
           date={cursor}
           events={eventsOn(cursor)}
+          showEvents={showEvents}
           onEditBlock={(block) => setEditingBlock(block)}
           onEditEvent={openEvent}
-          onAddBlock={() => setEditingBlock('new')}
-          onAddEvent={() => setEditingEvent('new')}
         />
       ) : null}
 
@@ -212,9 +229,10 @@ export function CalendarView() {
           {strip.map((date) => (
             <div key={date}>
               <div className="eyebrow" style={{ margin: '4px 0 8px 2px' }}>{formatDayLabel(date, today)}</div>
-              <DayColumns
+              <DaySchedule
                 date={date}
                 events={eventsOn(date)}
+                showEvents={showEvents}
                 onEditBlock={(block) => setEditingBlock(block)}
                 onEditEvent={openEvent}
               />

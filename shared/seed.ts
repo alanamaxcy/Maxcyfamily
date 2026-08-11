@@ -44,6 +44,7 @@ export const DEFAULT_SETTINGS: Settings = {
   },
   pin: '',
   celebrate: true,
+  scheduleShowsEvents: true,
 }
 
 const WEEKDAYS = [1, 2, 3, 4, 5]

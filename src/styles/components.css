@@ -500,11 +500,6 @@
   z-index: 1;
 }
 
-/* One of the two label variants is always hidden; see the narrow override. */
-.nav-label-short {
-  display: none;
-}
-
 .nav-pill {
   position: absolute;
   inset: 4px;

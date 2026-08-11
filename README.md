@@ -22,8 +22,8 @@ Blobs as the database. No other services, no API keys, nothing to renew.
 
 The first load seeds a starter homeschool schedule, a set of chores, two
 routines and a reward catalogue, plus the 14 recipes from the old recipe app.
-No people are created — add them on the Family tab, and everything else becomes
-assignable.
+No people are created — add them from Home (**+ Person**) or under More →
+Family, and everything else becomes assignable.
 
 ### On the iPad
 
@@ -80,19 +80,38 @@ npm run typecheck
 
 ## The views
 
-| Tab | What it does |
+Four tabs across the bottom are the ones tapped all day. Everything else lives
+behind **More** — the hamburger at the right of the bar — because they are
+screens you set up occasionally rather than use constantly. Eight tabs never
+fitted a phone.
+
+| Bottom bar | What it does |
 | --- | --- |
-| **Today** | The day in two columns — Schedule and Events — with a live "now" marker, and the family below. Tap a face to open that person's page. |
-| **Calendar** | Day (two columns), week, and a month grid that shows event titles. |
+| **Home** | Just the family: a big face per person, their points, their streak and a ring showing how much of today they have finished. Tap a face to open that person's page. |
+| **Schedule** | The day full width, with a live "now" marker — day, week, and a month grid that shows event titles. An **Events** switch folds your connected calendars into the same timeline. |
+| **Menu** | The week's meals, repeating meals, and the shopping list it feeds. |
+| **To-dos** | Shared lists for the grown-ups. |
+
+| Behind **More** | What it does |
+| --- | --- |
 | **Routines** | Three tabs: **Schedule** (edit or delete any block of the day), **Routines** (the checklists), **Chores**. |
 | **Rewards** | Points balances, the reward catalogue, what's waiting to be handed over, and the undo log. |
-| **Meals** | The week's menu, repeating meals, and the shopping list it feeds. |
 | **Recipes** | The recipe vault — scaling, cup↔gram conversion, and import from a link. |
-| **To-dos** | Shared lists for the grown-ups. |
 | **Family** | Add and edit everyone. |
+| **Weather** | The hourly and the week ahead. |
+| **Settings** | Calendars, weather, the sleep screen, backup and restore. |
 
-Weather lives in the top bar; tapping it opens the full forecast. Settings is
-the gear, top right.
+Weather also lives in the top bar; tapping it opens the full forecast. The gear
+top right opens Settings directly, and the moon beside it puts the display to
+sleep without waiting for the idle timer.
+
+### Home is the family
+
+Nothing but faces. The rings size themselves to whatever room the screen has,
+so a portrait iPad on the wall is readable from across the room while a phone
+falls back to something thumb-sized. The heading counts who still owes
+something rather than repeating the date and household name already in the top
+bar.
 
 ### A kid's page
 
@@ -111,20 +130,28 @@ A routine with nobody assigned belongs to every kid, so the seeded Morning and
 Bedtime routines work the moment you add people. Name someone explicitly — a
 grown-up included — and it becomes theirs alone.
 
-### Two columns: Schedule and Events
+### The schedule, and the Events switch
 
-The household's own schedule and your connected calendars are kept in separate
-columns rather than merged into one list. The schedule is the same most days and
-reads as a rhythm; events are the exceptions and read as "what is different
-today". Merged, the one appointment that mattered sat among twelve identical
-lesson blocks.
+The household's own blocks are the spine of the day and run full width. Your
+connected calendars are *optional* on that timeline: the **Events** switch above
+it folds them in, in clock order, or leaves them out.
 
-With more than one calendar connected, the Events column grows per-calendar
-chips so you can hide work while looking at the family week. The filter is
-device-local and only appears when there is actually a choice to make.
+Off, the schedule reads as a rhythm — the shape a normal homeschool day has.
+On, the one appointment that actually matters sits where it belongs in the day
+rather than in a column you have to cross-reference. Events never look like
+blocks: they carry a calendar tile instead of an emoji and are captioned with
+the feed they came from. All-day entries sit on their own strip above the
+timeline instead of pretending to have a time.
+
+The switch is a household setting, so it syncs to every device rather than
+having to be set on each one.
+
+With more than one calendar connected, per-calendar chips appear so you can hide
+work while looking at the family week. That filter is device-local and only
+appears when there is actually a choice to make.
 
 The month grid shows event titles, colour-coded by calendar, with "+N more"
-where a day is busy — tapping any day opens it in the two-column view.
+where a day is busy — tapping any day opens it.
 
 ### A grown-up's page
 
@@ -136,7 +163,7 @@ Tasks include anything assigned to them plus anything nobody has claimed.
 
 ### Repeating meals
 
-Meals → **Repeats** sets up the ones that come round on a cycle. Schedules
+Menu → **Repeats** sets up the ones that come round on a cycle. Schedules
 include *every other week*, so "spaghetti every other Monday" is two taps. A
 repeating meal fills its slot automatically and is badged as such; pinning a
 different meal on one day overrides it for that day only, and clearing a day

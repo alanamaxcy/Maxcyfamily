@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { BUILD_ID, fetchDeployedBuild } from './version.ts'
 
 /** A clock that re-renders on the minute boundary rather than drifting. */
@@ -114,6 +114,42 @@ export function useWakeLock(enabled: boolean): void {
       void sentinel?.release().catch(() => {})
     }
   }, [enabled])
+}
+
+/**
+ * The live size of an element.
+ *
+ * Home sizes its faces from the room it actually has rather than from guessed
+ * chrome heights, so the same code fills a portrait iPad and a phone.
+ */
+export function useElementSize<T extends HTMLElement>(): [
+  (node: T | null) => void,
+  { width: number; height: number },
+] {
+  const [size, setSize] = useState({ width: 0, height: 0 })
+  const observer = useRef<ResizeObserver | null>(null)
+
+  const ref = useCallback((node: T | null) => {
+    observer.current?.disconnect()
+    if (!node) return
+
+    const measure = () => {
+      const box = node.getBoundingClientRect()
+      setSize((current) =>
+        Math.abs(current.width - box.width) < 1 && Math.abs(current.height - box.height) < 1
+          ? current
+          : { width: box.width, height: box.height },
+      )
+    }
+
+    measure()
+    observer.current = new ResizeObserver(measure)
+    observer.current.observe(node)
+  }, [])
+
+  useEffect(() => () => observer.current?.disconnect(), [])
+
+  return [ref, size]
 }
 
 /** Debounces a value — used by the location search box. */
