@@ -141,11 +141,11 @@ export function SettingsView({ open, onClose }: { open: boolean; onClose: () => 
               label="Clock"
             />
           </Row>
-          <Row label="Show what's next">
+          <Row label="Show now and next" hint="The block you're in and the one coming up, along the bottom.">
             <Switch
               on={settings.sleep.showNextEvent}
               onChange={(showNextEvent) => patch({ sleep: { ...settings.sleep, showNextEvent } })}
-              label="Next event"
+              label="Now and next"
             />
           </Row>
           <Row label="Show the weather">
@@ -230,10 +230,21 @@ function Section({ title, hint, children }: { title: string; hint?: string; chil
   )
 }
 
-function Row({ label, children }: { label: string; children: React.ReactNode }) {
+function Row({
+  label,
+  hint,
+  children,
+}: {
+  label: string
+  hint?: string
+  children: React.ReactNode
+}) {
   return (
-    <div className="row-between" style={{ padding: '12px 0' }}>
-      <span style={{ fontWeight: 600, fontSize: 15 }}>{label}</span>
+    <div className="row-between" style={{ padding: '12px 0', gap: 16 }}>
+      <span style={{ minWidth: 0 }}>
+        <span style={{ display: 'block', fontWeight: 600, fontSize: 15 }}>{label}</span>
+        {hint ? <span className="tiny" style={{ display: 'block', marginTop: 2 }}>{hint}</span> : null}
+      </span>
       {children}
     </div>
   )

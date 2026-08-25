@@ -6,9 +6,9 @@
  * balance and un-ticks the chore it came from.
  */
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import type { Reward } from '@shared/types.ts'
+import type { Person, Reward } from '@shared/types.ts'
 import { newId } from '@shared/id.ts'
 import { allRedemptions, recentLedger } from '@shared/schedule.ts'
 import { formatDayLabel } from '@shared/date.ts'
@@ -24,6 +24,7 @@ export function RewardsView() {
   const { state, today, dispatch, toast } = useApp()
   const [tab, setTab] = useState<Tab>('catalog')
   const [editing, setEditing] = useState<Reward | 'new' | null>(null)
+  const [adjusting, setAdjusting] = useState<Person | null>(null)
 
   const people = state.core.people.filter((person) => !person.archived).sort((a, b) => a.sort - b.sort)
   const rewards = [...state.core.rewards].filter((reward) => !reward.archived).sort((a, b) => a.sort - b.sort)
@@ -46,20 +47,27 @@ export function RewardsView() {
       {people.length > 0 ? (
         <div className="balance-rail">
           {people.map((person, index) => (
-            <motion.div
+            <motion.button
               key={person.id}
               className="balance-card"
               style={tint(person.color)}
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.05, duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+              whileTap={{ scale: 0.96 }}
+              onClick={() => setAdjusting(person)}
+              aria-label={`Adjust ${person.name}'s points`}
             >
               <Avatar person={person} size={44} />
               <span className="balance-name truncate">{person.name}</span>
               <span className="balance-points numeral">
                 <CountUp value={person.points} />
               </span>
-            </motion.div>
+              <span className="balance-adjust" aria-hidden="true">
+                <Icon name="plus" size={13} />
+                <Icon name="minus" size={13} />
+              </span>
+            </motion.button>
           ))}
         </div>
       ) : null}
@@ -223,7 +231,133 @@ export function RewardsView() {
         onSave={(reward) => dispatch({ t: 'reward.upsert', reward })}
         onDelete={(id) => dispatch({ t: 'reward.remove', id })}
       />
+
+      <AdjustSheet
+        person={adjusting}
+        onClose={() => setAdjusting(null)}
+        onApply={(person, delta, reason) => {
+          dispatch({
+            t: 'points.adjust',
+            entry: {
+              id: newId('led'),
+              personId: person.id,
+              delta,
+              reason,
+              refType: 'adjustment',
+              at: new Date().toISOString(),
+            },
+          })
+          toast(
+            delta < 0
+              ? `Took ${Math.abs(delta)} from ${person.name}`
+              : `Gave ${person.name} ${delta}`,
+          )
+          setAdjusting(null)
+        }}
+      />
     </>
+  )
+}
+
+/* ------------------------------------------------------------------ */
+
+/**
+ * Hand out or take back points by hand.
+ *
+ * Taking points away is a consequence, so it is deliberately two decisions —
+ * how many, and what for — and the reason is what shows up in History. Every
+ * adjustment is an ordinary ledger entry, which means it can be undone from
+ * there like anything else.
+ */
+function AdjustSheet({
+  person,
+  onClose,
+  onApply,
+}: {
+  person: Person | null
+  onClose: () => void
+  onApply: (person: Person, delta: number, reason: string) => void
+}) {
+  const [amount, setAmount] = useState(5)
+  const [reason, setReason] = useState('')
+
+  useEffect(() => {
+    if (person) {
+      setAmount(5)
+      setReason('')
+    }
+  }, [person])
+
+  if (!person) {
+    return (
+      <Sheet open={false} onClose={onClose} title="">
+        {null}
+      </Sheet>
+    )
+  }
+
+  // Never leave a kid in debt — you can zero a balance but not go past it.
+  const maxTake = person.points
+  const take = Math.min(amount, maxTake)
+
+  return (
+    <Sheet
+      open
+      onClose={onClose}
+      title={person.name}
+      subtitle={`${person.points} ${person.points === 1 ? 'point' : 'points'} right now`}
+    >
+      <div className="stack">
+        <Field label="How many">
+          <Stepper value={amount} onChange={setAmount} step={5} min={1} max={999} suffix="pts" />
+        </Field>
+
+        <div className="quick-amounts">
+          {[1, 5, 10, 25].map((preset) => (
+            <button
+              key={preset}
+              className={`chip${amount === preset ? ' chip-on' : ''}`}
+              onClick={() => setAmount(preset)}
+            >
+              {preset}
+            </button>
+          ))}
+        </div>
+
+        <Field label="What for" hint="Shows up in History, so it is worth a word or two.">
+          <input
+            value={reason}
+            onChange={(event) => setReason(event.target.value)}
+            placeholder="Left the kitchen a mess"
+            maxLength={80}
+          />
+        </Field>
+
+        <div className="adjust-actions">
+          <button
+            className="btn btn-danger btn-block"
+            disabled={maxTake === 0}
+            onClick={() => onApply(person, -take, reason.trim() || 'Points taken away')}
+          >
+            <Icon name="minus" size={18} />
+            {maxTake === 0 ? 'Nothing to take' : `Take ${take} away`}
+          </button>
+          <button
+            className="btn btn-accent btn-block"
+            onClick={() => onApply(person, amount, reason.trim() || 'Bonus points')}
+          >
+            <Icon name="plus" size={18} />
+            Give {amount}
+          </button>
+        </div>
+
+        {amount > maxTake && maxTake > 0 ? (
+          <p className="tiny">
+            {person.name} only has {maxTake}, so taking away stops there rather than going negative.
+          </p>
+        ) : null}
+      </div>
+    </Sheet>
   )
 }
 

@@ -693,6 +693,7 @@
 }
 
 .balance-card {
+  position: relative;
   flex: none;
   min-width: 128px;
   padding: 14px;
@@ -702,6 +703,40 @@
   display: flex;
   flex-direction: column;
   gap: 6px;
+  text-align: left;
+  transition: box-shadow var(--t-mid) var(--ease-out);
+}
+
+.balance-card:hover {
+  box-shadow: var(--shadow-md);
+}
+
+/* Always visible, not hover-only — on the wall display there is no hover. */
+.balance-adjust {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: flex;
+  align-items: center;
+  gap: 1px;
+  padding: 4px 7px;
+  border-radius: var(--r-full);
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+  color: var(--ink-3);
+}
+
+.quick-amounts {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.adjust-actions {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 10px;
+  margin-top: 4px;
 }
 
 .balance-name {
@@ -1894,7 +1929,9 @@
   left: 0;
   right: 0;
   bottom: 0;
-  padding: 0 46px calc(58px + env(safe-area-inset-bottom));
+  /* 58px of slack on top of the device inset read as a dead band along the
+     bottom edge once the app was on the home screen. */
+  padding: 0 46px calc(26px + var(--safe-bottom));
   color: #fff;
   text-shadow: 0 2px 24px rgba(0, 0, 0, 0.45);
 }
@@ -1956,9 +1993,72 @@
   opacity: 0.7;
 }
 
+/* Now and Next, side by side along the bottom edge. */
+.saver-agenda {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 12px;
+  margin-top: 26px;
+}
+
+.saver-slot {
+  min-width: 0;
+  padding: 14px 20px 16px;
+  border-radius: var(--r-lg);
+  background: rgba(255, 255, 255, 0.13);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.saver-slot-label {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  opacity: 0.72;
+}
+
+.saver-slot-when {
+  letter-spacing: 0;
+  text-transform: none;
+  font-size: 13px;
+  opacity: 0.85;
+}
+
+.saver-slot-body {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 7px;
+  min-width: 0;
+}
+
+.saver-slot-emoji {
+  font-size: 26px;
+  line-height: 1;
+  flex: none;
+}
+
+.saver-slot-title {
+  font-size: clamp(19px, 2.4vw, 27px);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  min-width: 0;
+}
+
+.saver-slot-empty {
+  font-size: clamp(16px, 1.9vw, 20px);
+  font-weight: 600;
+  opacity: 0.6;
+}
+
 .saver-hint {
   position: absolute;
-  top: calc(30px + env(safe-area-inset-top));
+  top: calc(30px + var(--safe-top));
   left: 0;
   right: 0;
   text-align: center;
@@ -1982,6 +2082,12 @@
 
   .topbar-time {
     font-size: 32px;
+  }
+
+  /* Two controls sit beside it here, so the greeting gets a smaller size
+     rather than wrapping onto a second line. */
+  .home-head .h1 {
+    font-size: 24px;
   }
 
   /*
@@ -2494,19 +2600,85 @@
   min-height: 340px;
 }
 
+/* Holds the card and, while rearranging, the arrows that sit over it. */
+.home-cell {
+  position: relative;
+  display: flex;
+  min-height: 0;
+  min-width: 0;
+}
+
 .home-card {
   background: var(--surface);
   border-radius: var(--r-xl);
   box-shadow: var(--shadow-md);
   padding: var(--sp-6) var(--sp-4) var(--sp-5);
   display: flex;
+  flex: 1;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 6px;
   text-align: center;
   min-height: 0;
-  transition: box-shadow var(--t-mid) var(--ease-out), background var(--t-mid) var(--ease-out);
+  min-width: 0;
+  transition: box-shadow var(--t-mid) var(--ease-out), background var(--t-mid) var(--ease-out),
+    opacity var(--t-mid) var(--ease-out);
+}
+
+/* Dimmed and inert while rearranging, so it reads as "not a tap target now". */
+.home-card.arranging {
+  opacity: 0.55;
+  cursor: default;
+}
+
+/*
+ * Centred with auto margins rather than translateX(-50%): framer-motion owns
+ * `transform` on a motion element, so its entry animation resets any transform
+ * set here and the pill drifts off the card.
+ */
+.home-arrange {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 14px;
+  width: fit-content;
+  margin-inline: auto;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px;
+  border-radius: var(--r-full);
+  background: var(--ink);
+  box-shadow: var(--shadow-lg);
+  z-index: 2;
+}
+
+.home-arrange-btn {
+  width: 42px;
+  height: 42px;
+  border-radius: var(--r-full);
+  display: grid;
+  place-items: center;
+  color: var(--surface);
+  transition: background var(--t-fast) var(--ease-out), transform var(--t-fast) var(--ease-spring);
+}
+
+.home-arrange-btn:active {
+  transform: scale(0.88);
+}
+
+.home-arrange-btn:disabled {
+  opacity: 0.28;
+  pointer-events: none;
+}
+
+.home-arrange-pos {
+  min-width: 22px;
+  text-align: center;
+  color: var(--surface);
+  font-size: 15px;
+  font-weight: 800;
 }
 
 .home-card:hover {

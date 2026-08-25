@@ -149,7 +149,10 @@ img {
   overflow-y: auto;
   overflow-x: hidden;
   -webkit-overflow-scrolling: touch;
-  padding: var(--sp-5) var(--page-pad) calc(var(--sp-8) + env(safe-area-inset-bottom));
+  /* No safe-area inset here — the nav is its own grid row underneath and
+     already covers the home indicator. Adding it again padded the bottom of
+     every scrolling page by an extra 34px for nothing. */
+  padding: var(--sp-5) var(--page-pad) var(--sp-8);
   scrollbar-width: none;
   min-width: 0;
 }

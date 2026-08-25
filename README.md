@@ -113,6 +113,24 @@ falls back to something thumb-sized. The heading counts who still owes
 something rather than repeating the date and household name already in the top
 bar.
 
+The grip icon in the header turns on **Rearrange**, where each card grows a pair
+of arrows and its position in the order. Reordering is its own mode on purpose:
+the most common thing that happens on this screen is a kid tapping their own
+face, and a drag gesture layered on top of that fires by accident all day.
+
+### The sleep screen
+
+After a few idle minutes — or immediately, from the moon in the top bar — the
+display becomes a photo frame: a full-bleed photo, the time, the date, and the
+weather.
+
+Along the bottom it also carries **Now** and **Next**, side by side: the block
+the house is in and the one coming up, with its start time. That is the whole
+reason to glance at the thing from the doorway, so it does not require waking
+it. When an appointment overlaps a block — a dentist run during Reading — the
+block wins the Now slot, because that is what the house is actually doing.
+Switch the pair off under Settings → Sleep screen.
+
 ### A kid's page
 
 Routines are the point of this screen. Each one is a full card stating its
@@ -243,6 +261,11 @@ Events you add inside the app are stored here, not written back to Google.
 Points are deliberately awarded the instant a kid ticks something. Every award
 is a ledger entry a grown-up can undo from **Rewards → History**, which reverses
 the balance *and* un-ticks the chore.
+
+Points can also be taken away. Tapping anyone's balance on Rewards opens a sheet
+to give or remove points by hand — two decisions, how many and what for, with
+the reason showing up in History like any other entry (and undoable from there).
+Taking away stops at zero rather than putting a kid in debt.
 
 ---
 

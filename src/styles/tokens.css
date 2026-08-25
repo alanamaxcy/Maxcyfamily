@@ -8,6 +8,25 @@
  */
 
 :root {
+  /*
+   * Device safe areas, behind variables rather than raw env().
+   *
+   * A desktop browser reports zero for all of these, so a home-indicator bug
+   * is invisible until it is on the actual iPad. Routed through variables they
+   * can be set to a real device's values and checked anywhere.
+   */
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  /*
+   * What the bottom bar reserves for the home indicator. The full inset is 34px
+   * on a phone, and adding all of it underneath a full-height bar left a third
+   * of the bar blank — which is the "space at the bottom" you see once the app
+   * is on the home screen rather than in a browser tab. iOS puts tab labels in
+   * the bar and lets the indicator strip be breathing room; capping it does the
+   * same, while still keeping labels clear of the indicator itself.
+   */
+  --nav-safe: min(var(--safe-bottom), 16px);
+
   /* --- Brand hues ------------------------------------------------- */
   --coral: #ff6b5a;
   --coral-deep: #e8452f;
@@ -89,7 +108,9 @@
 
   /* --- Chrome sizing ------------------------------------------------ */
   --topbar-h: 92px;
-  --nav-h: 88px;
+  /* The tab row itself is 68px; the rest was slack that read as empty space
+     under the labels once the home-indicator strip was added below it. */
+  --nav-h: 76px;
   --page-pad: 22px;
 
   /* --- Motion ------------------------------------------------------- */

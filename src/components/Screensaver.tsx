@@ -40,18 +40,44 @@ export function Screensaver({ onWake }: { onWake: () => void }) {
 
   const nowMinutes = minutesOfDayInTimezone(now.toISOString(), timezone)
 
-  /** The next thing coming up — a schedule block or a calendar event. */
-  const upNext = useMemo(() => {
-    const blocks = blocksForDate(state.core, today)
-      .filter((block) => minutesOfDay(block.startTime) > nowMinutes)
-      .map((block) => ({ label: block.title, when: formatClockTime(block.startTime), emoji: block.emoji }))
+  /*
+   * The day as a flat, time-ordered list of the household's blocks and the
+   * connected calendars, so "now" and "next" can be read straight off it. Sorted
+   * by minute-of-day rather than by the formatted label — "10:00 AM" sorts
+   * before "9:00 AM" as a string.
+   */
+  const agenda = useMemo(() => {
+    const blocks = blocksForDate(state.core, today).map((block) => ({
+      label: block.title,
+      when: formatClockTime(block.startTime),
+      emoji: block.emoji,
+      start: minutesOfDay(block.startTime),
+      end: minutesOfDay(block.endTime),
+      isBlock: true,
+    }))
 
     const events = (calendar?.events ?? [])
-      .filter((event) => !event.allDay && eventCoversDate(event, today, timezone) && new Date(event.start) > now)
-      .map((event) => ({ label: event.title, when: formatTime(event.start, timezone), emoji: '📅' }))
+      .filter((event) => !event.allDay && eventCoversDate(event, today, timezone))
+      .map((event) => ({
+        label: event.title,
+        when: formatTime(event.start, timezone),
+        emoji: '📅',
+        start: minutesOfDayInTimezone(event.start, timezone),
+        end: minutesOfDayInTimezone(event.end, timezone),
+        isBlock: false,
+      }))
 
-    return [...blocks, ...events].sort((a, b) => a.when.localeCompare(b.when))[0] ?? null
-  }, [state.core, today, nowMinutes, calendar, timezone, now])
+    return [...blocks, ...events].sort((a, b) => a.start - b.start || a.end - b.end)
+  }, [state.core, today, calendar, timezone])
+
+  /*
+   * Whatever is happening right now, and whatever starts next. When an
+   * appointment overlaps a block — a dentist run during Reading — the block is
+   * what the house is actually doing, so it wins the "Now" slot.
+   */
+  const current = agenda.filter((item) => nowMinutes >= item.start && nowMinutes < item.end)
+  const happening = current.find((item) => item.isBlock) ?? current[0] ?? null
+  const upNext = agenda.find((item) => item.start > nowMinutes) ?? null
 
   const photo = photos[index % photos.length]
   const background = photos.length > 0 && photo
@@ -130,29 +156,58 @@ export function Screensaver({ onWake }: { onWake: () => void }) {
           }).format(now)}
         </motion.div>
 
-        <motion.div
-          className="saver-row"
-          initial={{ opacity: 0, y: 18 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.65, duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-        >
-          {sleep.showWeather && weather ? (
+        {sleep.showWeather && weather ? (
+          <motion.div
+            className="saver-row"
+            initial={{ opacity: 0, y: 18 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.65, duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+          >
             <span className="saver-pill">
               <WeatherIcon code={weather.now.code} isDay={weather.now.isDay} size={30} />
               <span className="numeral">{weather.now.temp}°</span>
             </span>
-          ) : null}
-
-          {sleep.showNextEvent && upNext ? (
-            <span className="saver-pill">
-              <span>{upNext.emoji}</span>
-              <span className="truncate">{upNext.label}</span>
-              <span className="saver-when numeral">{upNext.when}</span>
-            </span>
-          ) : null}
-        </motion.div>
+          </motion.div>
+        ) : null}
 
         {photo?.caption ? <div className="saver-caption">{photo.caption}</div> : null}
+
+        {/* What the house is doing, and what it is doing next — the two things
+            worth knowing from across the room without waking the display. */}
+        {sleep.showNextEvent && (happening || upNext) ? (
+          <motion.div
+            className="saver-agenda"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.8, duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <div className="saver-slot">
+              <span className="saver-slot-label">Now</span>
+              {happening ? (
+                <span className="saver-slot-body">
+                  <span className="saver-slot-emoji">{happening.emoji}</span>
+                  <span className="saver-slot-title truncate">{happening.label}</span>
+                </span>
+              ) : (
+                <span className="saver-slot-body saver-slot-empty">Nothing scheduled</span>
+              )}
+            </div>
+
+            <div className="saver-slot">
+              <span className="saver-slot-label">
+                Next{upNext ? <span className="saver-slot-when numeral">{upNext.when}</span> : null}
+              </span>
+              {upNext ? (
+                <span className="saver-slot-body">
+                  <span className="saver-slot-emoji">{upNext.emoji}</span>
+                  <span className="saver-slot-title truncate">{upNext.label}</span>
+                </span>
+              ) : (
+                <span className="saver-slot-body saver-slot-empty">That's the day</span>
+              )}
+            </div>
+          </motion.div>
+        ) : null}
       </div>
 
       <motion.div
